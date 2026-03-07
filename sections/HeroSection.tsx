@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Section, Container } from "@/components/layout/Section";
-import { slideInFromTop, fadeIn, staggerContainer } from "@/animations/framer-variants";
+import { slideInFromTop, fadeIn, staggerContainer } from "@/components/ui/framer-variants";
 import Image from "next/image";
 
 export function HeroSection() {
@@ -14,9 +14,10 @@ export function HeroSection() {
             <div className="absolute inset-0 z-0">
                 <div className="relative w-full h-full">
                     <Image
-                        src="/images/hero-bg.png"
+                        src="/images/hero/hero-bg.png"
                         alt="Quarry site overlay"
                         fill
+                        sizes="100vw"
                         className="object-cover opacity-100"
                         priority
                     />

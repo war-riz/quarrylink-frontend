@@ -3,12 +3,12 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Section, Container } from "@/components/layout/Section";
-import { slideInFromBottom, fadeIn, staggerContainer } from "@/animations/framer-variants";
+import { slideInFromBottom, fadeIn, staggerContainer } from "@/components/ui/framer-variants";
 import { howItWorksSteps } from "@/constants/how-it-works";
 
 export function HowItWorksSection() {
     return (
-        <Section className="bg-white pt-8 pb-16 md:pt-10 md:pb-20 lg:pt-24 lg:pb-32">
+        <Section id="how-it-works" className="bg-white pt-8 pb-16 md:pt-10 md:pb-20 lg:pt-20 lg:pb-5">
             <Container>
                 <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-8 lg:gap-16 w-full">
 
@@ -18,15 +18,15 @@ export function HowItWorksSection() {
                         whileInView="visible"
                         viewport={{ once: true, margin: "-100px" }}
                         variants={fadeIn}
-                        className="w-full lg:w-1/2 flex justify-center lg:justify-start lg:sticky lg:top-24"
+                        className="w-full lg:w-1/2 flex justify-center lg:justify-start lg:sticky lg:top-24 items-center"
                     >
-                        <div className="relative w-[220px] h-[440px] md:w-[260px] md:h-[520px] lg:w-[380px] lg:h-[760px]">
+                        <div className="relative w-[280px] h-[560px] md:w-[320px] md:h-[640px] lg:w-[460px] lg:h-[920px]">
                             <Image
-                                src="/images/how-it-works-phone.png"
+                                src="/images/howitwork/how-it-works-phone.png"
                                 alt="QuarryLink Mobile App Interface"
                                 fill
-                                sizes="(max-width: 768px) 220px, (max-width: 1024px) 260px, 380px"
-                                className="object-contain drop-shadow-2xl"
+                                sizes="(max-width: 768px) 280px, (max-width: 1024px) 320px, 460px"
+                                className="object-contain drop-shadow-2xl scale-[1.2] lg:scale-[1.3] origin-center"
                             />
                         </div>
                     </motion.div>

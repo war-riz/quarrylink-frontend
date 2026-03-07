@@ -3,11 +3,11 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Section, Container } from "@/components/layout/Section";
-import { slideInFromBottom, fadeIn } from "@/animations/framer-variants";
+import { slideInFromBottom, fadeIn } from "@/components/ui/framer-variants";
 
 export function FeatureSection() {
     return (
-        <Section className="bg-[#F4F4F7] pt-12 pb-10 md:pt-15 md:pb-10 lg:pt-20 lg:pb-15 px-0 lg:px-6 md:px-6">
+        <Section id="features" className="bg-[#F4F4F7] pt-12 pb-10 md:pt-15 md:pb-10 lg:pt-20 lg:pb-15 px-0 lg:px-6 md:px-6">
             <Container>
                 <motion.div
                     initial="hidden"
@@ -16,26 +16,27 @@ export function FeatureSection() {
                     variants={fadeIn}
                     className="relative w-full aspect-4/3 md:aspect-video max-h-[717px] rounded-[30px] md:rounded-[60px] overflow-hidden"
                 >
-                    {/* Background Image */}
                     <Image
-                        src="/images/feature-bg.png"
+                        src="/images/feature/feature-bg.png"
                         alt="Quarry site logistics"
                         fill
+                        sizes="(max-width: 1024px) 100vw, 1200px"
                         className="object-cover"
                     />
 
                     {/* Floating Card */}
                     <motion.div
                         variants={slideInFromBottom}
-                       className="absolute bottom-4 right-4 md:bottom-10 md:right-10 bg-white rounded-[16px] md:rounded-[25px] p-4 md:p-[24px] shadow-[0px_20px_25px_0px_rgba(0,0,0,0.1),0px_8px_10px_0px_rgba(0,0,0,0.1)] flex flex-col items-center justify-center w-auto max-w-[90%] md:w-[260px] h-auto md:h-[133px] origin-bottom-right max-md:scale-90 max-sm:scale-75"
+                        className="absolute bottom-4 right-4 md:bottom-10 md:right-10 bg-white rounded-[16px] md:rounded-[25px] p-4 md:p-[24px] shadow-[0px_20px_25px_0px_rgba(0,0,0,0.1),0px_8px_10px_0px_rgba(0,0,0,0.1)] flex flex-col items-center justify-center w-auto max-w-[90%] md:w-[260px] h-auto md:h-[133px] origin-bottom-right max-md:scale-90 max-sm:scale-75"
                     >
                         <div className="flex flex-col gap-2 md:gap-[9px] w-full">
                             <div className="flex items-center gap-2 md:gap-[9px] justify-center">
                                 <div className="relative shrink-0 w-[32px] h-[32px] md:w-[46px] md:h-[46px]">
                                     <Image
-                                        src="/images/checkmark-circle.svg"
+                                        src="/images/feature/checkmark-circle.svg"
                                         alt="Success Checkmark"
                                         fill
+                                        sizes="50px"
                                         className="object-contain"
                                     />
                                 </div>

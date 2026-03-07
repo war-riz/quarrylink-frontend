@@ -1,15 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { Section, Container } from "@/components/layout/Section";
-import { slideInFromBottom, fadeIn, staggerContainer } from "@/animations/framer-variants";
+import { slideInFromBottom, fadeIn, staggerContainer } from "@/components/ui/framer-variants";
+import { ImageWithSkeleton } from "@/components/ui/ImageWithSkeleton";
 
 import { services } from "@/constants/services";
 
 export function ServiceSection() {
     return (
-        <Section className="bg-[#F4F4F7] pt-5 pb-24 md:pt-5 lg:pt-5 lg:pb-24">
+        <Section id="services" className="bg-[#F4F4F7] pt-5 pb-24 md:pt-5 lg:pt-5 lg:pb-24">
             <Container className="flex flex-col items-center">
                 {/* Headers */}
                 <motion.div
@@ -54,14 +54,14 @@ export function ServiceSection() {
                             className="bg-white rounded-t-[10px] rounded-b-[24px] shadow-sm hover:shadow-md w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-22px)] max-w-[300px] flex flex-col hover:-translate-y-2 transition-all duration-300"
                         >
                             <div className="p-1 pb-0 relative">
-                                <div className="relative w-full aspect-3/2 overflow-hidden rounded-[8px]">
-                                    <Image
-                                        src={service.image}
-                                        alt={service.title}
-                                        fill
-                                        className="object-cover"
-                                    />
-                                </div>
+                                <ImageWithSkeleton
+                                    containerClassName="w-full aspect-3/2 rounded-[8px]"
+                                    src={service.image}
+                                    alt={service.title}
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    className="object-cover"
+                                />
                             </div>
 
                             <div className="flex flex-col gap-2 lg:gap-3 px-5 py-5 lg:px-6 lg:pt-4 lg:pb-6 flex-1">
