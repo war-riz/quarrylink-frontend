@@ -1,37 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# QuarryLink Frontend
 
-## Getting Started
+![QuarryLink Banner](/public/images/quarry-screenshot.png)
 
-First, run the development server:
+QuarryLink is a modern, production-grade Next.js web application designed to revolutionize quarry logistics and supply chain management in Nigeria and beyond. Built with AI-powered platform concepts in mind, it provides tools for material suppliers, project builders, and cargo movers.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 Tech Stack
+
+- **Framework:** [Next.js 15](https://nextjs.org/) (App Router)
+- **Library:** [React 19](https://react.dev/)
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
+- **Animations:** [Framer Motion](https://www.framer.com/motion/)
+- **Icons:** [Lucide React](https://lucide.dev/)
+- **Language:** TypeScript
+
+## 📂 Project Structure
+
+The project follows a modular, scalable architecture with separation of concerns:
+
+```
+quarrylink_frontend/
+├── app/                  # Next.js App Router (Pages, Layouts, global CSS)
+│   ├── not-found.tsx     # Custom 404 Error Page
+│   └── globals.css       # Tailwind entry and global variables
+├── components/           # Reusable React components
+│   ├── layout/           # Navbar, Footer, and Section wrappers
+│   └── ui/               # Buttons, Skeletons, Animations, Framer Variants
+├── constants/            # Static data, mock DB, and configurations
+│   ├── navigation.ts     # Site links and metadata
+│   └── ...               # Section-specific data (services, showcase, etc.)
+├── sections/             # Large page segments (Hero, Feature, Service, CTA)
+└── public/               # Static assets
+    └── images/           # All graphical assets, logos, and icons
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Key Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Component-Driven Design:** Everything is broken down into reusable `<Section>` and `<Container>` blocks.
+- **Fluid Animations:** Scroll-triggered entry animations and stagger effects powered by Framer Motion.
+- **Image Optimization:** Full leverage of Next.js `<Image>` component coupled with loading Skeletons (`ImageWithSkeleton`) for a premium loading experience.
+- **Responsive Navigation:** Mobile-friendly layouts, smooth anchor scrolling, and scalable UI elements.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Getting Started
 
-## Learn More
+Follow these instructions to get a local copy up and running.
 
-To learn more about Next.js, take a look at the following resources:
+### Prerequisites
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+You will need **Node.js 18+** installed on your machine.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Installation
 
-## Deploy on Vercel
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/war-riz/quarrylink-frontend.git
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. **Navigate into the directory:**
+   ```bash
+   cd quarrylink-frontend
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. **Install the dependencies:**
+   Choose your preferred package manager:
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
 
+4. **Run the development server:**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   # or
+   pnpm dev
+   ```
+
+5. **View the application:**
+   Open your browser and navigate to [http://localhost:3000](http://localhost:3000)
+
+## 🌐 Deployment
+
+This project is optimized for deployment on [Vercel](https://vercel.com/), the creators of Next.js. Simply push your code to a GitHub repository, link it to Vercel, and the platform will handle the rest with zero configuration.
+
+---
+
+*For business or support inquiries, please contact: hello@quarrylink.com*
