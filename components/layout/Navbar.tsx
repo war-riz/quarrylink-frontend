@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
 import { mainNav, siteConfig } from "@/constants/navigation";
-import { mobileMenuVariants } from "@/animations/framer-variants";
+import { mobileMenuVariants } from "@/components/ui/framer-variants";
 import { Button } from "@/components/ui/Button";
 
 export const Navbar = () => {
@@ -17,19 +17,20 @@ export const Navbar = () => {
         <header className="fixed top-0 w-full z-50 bg-white/10 dark:bg-black/10 backdrop-blur-md border-b border-white shadow-sm transition-colors">
             <div className="w-full h-[60px] max-w-[1440px] mx-auto px-6 lg:px-[89px] flex items-center justify-between relative">
                 {/* Logo Area */}
-                <Link href="/" className="flex items-center gap-3 lg:gap-[15px] group z-10 w-[200px]">
-                    <div className="relative flex items-center justify-center w-[30px] h-[30px] lg:w-[34px] lg:h-[34px] rounded-[10px] bg-[#ffc107] shadow-sm group-hover:scale-105 transition-transform duration-300 overflow-hidden">
+                <a href="/" className="flex items-center gap-3 lg:gap-[15px] group z-10 w-[200px]">
+                    <div className="relative flex items-center justify-center w-[65px] h-[40px] lg:w-[65px] lg:h-[40px] rounded-[7px] bg-[#ffc107] shadow-sm group-hover:scale-105 transition-transform duration-300 overflow-hidden">
                         <Image
                             src="/images/logo.png"
                             alt={siteConfig.name}
                             fill
+                            sizes="65px"
                             className="object-cover"
                         />
                     </div>
                     <span className="font-bold text-[16px] lg:text-[18px] tracking-tight text-[#121212] leading-[18px]">
                         {siteConfig.name}
                     </span>
-                </Link>
+                </a>
 
                 {/* Desktop Navigation */}
                 <nav className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center justify-center gap-8 lg:gap-[43.5px]">
