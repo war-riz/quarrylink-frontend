@@ -43,7 +43,7 @@ export function HowItWorksSection() {
                         <div className="mb-8 lg:mb-14 text-center lg:text-left w-full">
                             <motion.span
                                 variants={slideInFromBottom}
-                                className="font-bold text-[18px] md:text-[22px] text-[#1565c0] mb-3 block text-center lg:text-left"
+                                className="font-bold text-[14px] md:text-[16px] uppercase tracking-wider text-[#1565c0] mb-3 block text-center lg:text-left"
                             >
                                 How It Works
                             </motion.span>
@@ -75,7 +75,7 @@ export function HowItWorksSection() {
                                         </span>
                                     </div>
                                     <div className="flex flex-col justify-center pt-1 lg:pt-2">
-                                        <h3 className="font-bold text-[20px] lg:text-[24px] text-[#121212] leading-tight mb-2">
+                                        <h3 className="font-semibold text-[20px] lg:text-[24px] text-[#121212] leading-tight mb-2">
                                             {step.title}
                                         </h3>
                                         <p className="font-normal text-[15px] lg:text-[17px] text-[#636366] leading-relaxed max-w-md">

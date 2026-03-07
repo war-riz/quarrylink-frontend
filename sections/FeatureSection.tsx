@@ -41,7 +41,7 @@ export function FeatureSection() {
                                     />
                                 </div>
                                 <div className="flex flex-col justify-center">
-                                    <span className="font-extrabold text-[16px] md:text-[20px] text-[#121212] leading-tight md:leading-[24px] whitespace-nowrap">
+                                    <span className="font-bold text-[16px] md:text-[20px] text-[#121212] leading-tight md:leading-[24px] whitespace-nowrap">
                                         Order Delivered
                                     </span>
                                     <span className="font-normal text-[12px] md:text-[14.5px] text-[#636366] leading-tight md:leading-[20px]">

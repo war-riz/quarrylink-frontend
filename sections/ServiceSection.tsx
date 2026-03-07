@@ -21,7 +21,7 @@ export function ServiceSection() {
                 >
                     <motion.span
                         variants={slideInFromBottom}
-                        className="font-bold text-[18px] md:text-[22px] text-[#1565c0] mb-3"
+                        className="font-bold text-[14px] md:text-[16px] uppercase tracking-wider text-[#1565c0] mb-3"
                     >
                         Our Services
                     </motion.span>
@@ -65,7 +65,7 @@ export function ServiceSection() {
                             </div>
 
                             <div className="flex flex-col gap-2 lg:gap-3 px-5 py-5 lg:px-6 lg:pt-4 lg:pb-6 flex-1">
-                                <h3 className="font-bold text-[18px] lg:text-[20px] text-[#121212] leading-tight">
+                                <h3 className="font-semibold text-[18px] lg:text-[20px] text-[#121212] leading-tight">
                                     {service.title}
                                 </h3>
                                 <p className="font-normal text-[14px] text-[#636366] leading-relaxed">

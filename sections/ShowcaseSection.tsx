@@ -22,7 +22,7 @@ export function ShowcaseSection() {
                 >
                     <motion.span
                         variants={slideInFromBottom}
-                        className="font-bold text-[20px] md:text-[24px] lg:text-[28px] text-[#ffc107] mb-4 lg:mb-6"
+                        className="font-bold text-[14px] md:text-[16px] uppercase tracking-wider text-[#ffc107] mb-4 lg:mb-6"
                     >
                         For Business
                     </motion.span>
@@ -68,7 +68,7 @@ export function ShowcaseSection() {
 
                             {/* Card Content */}
                             <div className="flex-1 flex flex-col">
-                                <h3 className="font-bold text-[22px] lg:text-[26px] text-white mb-3 leading-tight">
+                                <h3 className="font-semibold text-[22px] lg:text-[26px] text-white mb-3 leading-tight">
                                     {spec.title}
                                 </h3>
                                 <p className="font-normal text-[16px] lg:text-[17px] text-[#99a1af] leading-relaxed mb-8">
