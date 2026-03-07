@@ -2,6 +2,8 @@ import { HeroSection } from "@/sections/HeroSection";
 import { FeatureSection } from "@/sections/FeatureSection";
 import { ServiceSection } from "@/sections/ServiceSection";
 import { HowItWorksSection } from "@/sections/HowItWorksSection";
+import { ShowcaseSection } from "@/sections/ShowcaseSection";
+import { CTASection } from "@/sections/CTASection";
 
 export default function Home() {
   return (
@@ -10,6 +12,8 @@ export default function Home() {
       <FeatureSection />
       <ServiceSection />
       <HowItWorksSection />
+      <ShowcaseSection />
+      <CTASection />
     </div>
   );
 }
