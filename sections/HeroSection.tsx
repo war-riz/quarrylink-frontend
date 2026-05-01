@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Section, Container } from "@/components/layout/Section";
-import { slideInFromTop, fadeIn, staggerContainer } from "@/components/ui/framer-variants";
+import { slideInFromTop, fadeIn, staggerContainer } from "@/constants/framer-variants";
 import Image from "next/image";
 
 export function HeroSection() {

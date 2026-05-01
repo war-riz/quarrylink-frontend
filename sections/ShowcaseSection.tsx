@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Section, Container } from "@/components/layout/Section";
-import { slideInFromBottom, fadeIn, staggerContainer } from "@/components/ui/framer-variants";
+import { slideInFromBottom, fadeIn, staggerContainer } from "@/constants/framer-variants";
 import { showcaseData } from "@/constants/showcase";
 import { ImageWithSkeleton } from "@/components/ui/ImageWithSkeleton";
 
@@ -18,7 +18,7 @@ export function ShowcaseSection() {
                     whileInView="visible"
                     viewport={{ once: true, margin: "-100px" }}
                     variants={staggerContainer}
-                    className="flex flex-col items-center text-center max-w-[900px] mx-auto mb-16 lg:mb-20"
+                    className="flex flex-col items-center text-center max-w-225 mx-auto mb-16 lg:mb-20"
                 >
                     <motion.span
                         variants={slideInFromBottom}
@@ -46,16 +46,16 @@ export function ShowcaseSection() {
                     whileInView="visible"
                     viewport={{ once: true, margin: "-100px" }}
                     variants={staggerContainer}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 w-full max-w-[1200px] mx-auto"
+                    className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 w-full max-w-300 mx-auto"
                 >
                     {showcaseData.map((spec, index) => (
                         <motion.div
                             key={index}
                             variants={slideInFromBottom}
-                            className="bg-[#1a1a1a] border border-[#1e2939] rounded-[12px] p-6 lg:p-10 flex flex-col hover:-translate-y-2 hover:border-[#3a3a3a] transition-all duration-300"
+                            className="bg-[#1a1a1a] border border-[#1e2939] rounded-xl p-6 lg:p-10 flex flex-col hover:-translate-y-2 hover:border-[#3a3a3a] transition-all duration-300"
                         >
                             {/* Card Icon */}
-                            <div className="w-[60px] h-[60px] rounded-[10px] bg-[#2a2a2a] flex items-center justify-center mb-6 lg:mb-8 shrink-0">
+                            <div className="w-15 h-15 rounded-[10px] bg-[#2a2a2a] flex items-center justify-center mb-6 lg:mb-8 shrink-0">
                                 <ImageWithSkeleton
                                     containerClassName="w-[30px] h-[30px]"
                                     src={spec.icon}
@@ -80,9 +80,9 @@ export function ShowcaseSection() {
                                     {spec.features.map((feature, featureIndex) => (
                                         <div
                                             key={featureIndex}
-                                            className="bg-[#2a2a2a] border border-[#3a3a3a] rounded-[361px] px-[14px] py-[6px] flex items-center gap-2"
+                                            className="bg-[#2a2a2a] border border-[#3a3a3a] rounded-[361px] px-3.5 py-1.5 flex items-center gap-2"
                                         >
-                                            <div className="w-[4px] h-[4px] bg-[#f59e0b] rounded-full shrink-0" />
+                                            <div className="w-1 h-1 bg-[#f59e0b] rounded-full shrink-0" />
                                             <span className="font-normal text-[13px] text-[#f59e0b] leading-tight">
                                                 {feature}
                                             </span>

@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Section, Container } from "@/components/layout/Section";
-import { slideInFromBottom, fadeIn, staggerContainer } from "@/components/ui/framer-variants";
+import { slideInFromBottom, fadeIn, staggerContainer } from "@/constants/framer-variants";
 import { howItWorksSteps } from "@/constants/how-it-works";
 
 export function HowItWorksSection() {
@@ -20,7 +20,7 @@ export function HowItWorksSection() {
                         variants={fadeIn}
                         className="w-full lg:w-1/2 flex justify-center lg:justify-start lg:sticky lg:top-24 items-center"
                     >
-                        <div className="relative w-[280px] h-[560px] md:w-[320px] md:h-[640px] lg:w-[460px] lg:h-[920px]">
+                        <div className="relative w-70 h-140 md:w-[320px] md:h-160 lg:w-115 lg:h-230">
                             <Image
                                 src="/images/howitwork/how-it-works-phone.png"
                                 alt="QuarryLink Mobile App Interface"
@@ -69,7 +69,7 @@ export function HowItWorksSection() {
                                     variants={slideInFromBottom}
                                     className="flex items-start gap-6 lg:gap-8 group"
                                 >
-                                    <div className="shrink-0 flex items-center justify-center w-[60px] h-[60px] lg:w-[70px] lg:h-[70px] bg-[#ffc107] rounded-[12px] shadow-sm transition-transform duration-300 group-hover:scale-110">
+                                    <div className="shrink-0 flex items-center justify-center w-15 h-15 lg:w-17.5 lg:h-17.5 bg-[#ffc107] rounded-xl shadow-sm transition-transform duration-300 group-hover:scale-110">
                                         <span className="font-extrabold text-[28px] lg:text-[32px] text-[#121212]">
                                             {step.number}
                                         </span>

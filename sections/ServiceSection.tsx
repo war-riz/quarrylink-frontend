@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Section, Container } from "@/components/layout/Section";
-import { slideInFromBottom, fadeIn, staggerContainer } from "@/components/ui/framer-variants";
+import { slideInFromBottom, fadeIn, staggerContainer } from "@/constants/framer-variants";
 import { ImageWithSkeleton } from "@/components/ui/ImageWithSkeleton";
 
 import { services } from "@/constants/services";
@@ -17,7 +17,7 @@ export function ServiceSection() {
                     whileInView="visible"
                     viewport={{ once: true, margin: "-100px" }}
                     variants={staggerContainer}
-                    className="flex flex-col items-center text-center max-w-[800px] mx-auto mb-12"
+                    className="flex flex-col items-center text-center max-w-200 mx-auto mb-12"
                 >
                     <motion.span
                         variants={slideInFromBottom}
@@ -45,13 +45,13 @@ export function ServiceSection() {
                     whileInView="visible"
                     viewport={{ once: true, margin: "-100px" }}
                     variants={staggerContainer}
-                    className="flex flex-wrap justify-center gap-6 lg:gap-8 w-full max-w-[1200px]"
+                    className="flex flex-wrap justify-center gap-6 lg:gap-8 w-full max-w-300"
                 >
                     {services.map((service, index) => (
                         <motion.div
                             key={index}
                             variants={slideInFromBottom}
-                            className="bg-white rounded-t-[10px] rounded-b-[24px] shadow-sm hover:shadow-md w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-22px)] max-w-[300px] flex flex-col hover:-translate-y-2 transition-all duration-300"
+                            className="bg-white rounded-t-[10px] rounded-b-3xl shadow-sm hover:shadow-md w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-22px)] max-w-75 flex flex-col hover:-translate-y-2 transition-all duration-300"
                         >
                             <div className="p-1 pb-0 relative">
                                 <ImageWithSkeleton

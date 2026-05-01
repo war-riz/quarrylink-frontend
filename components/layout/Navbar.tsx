@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
 import { mainNav, siteConfig } from "@/constants/navigation";
-import { mobileMenuVariants } from "@/components/ui/framer-variants";
+import { mobileMenuVariants } from "@/constants/framer-variants";
 import { Button } from "@/components/ui/Button";
 
 export const Navbar = () => {
@@ -15,10 +15,10 @@ export const Navbar = () => {
 
     return (
         <header className="fixed top-0 w-full z-50 bg-white/10 dark:bg-black/10 backdrop-blur-md border-b border-white shadow-sm transition-colors">
-            <div className="w-full h-[60px] max-w-[1440px] mx-auto px-6 lg:px-[89px] flex items-center justify-between relative">
+            <div className="w-full h-15 max-w-360 mx-auto px-6 lg:px-22.25 flex items-center justify-between relative">
                 {/* Logo Area */}
-                <a href="/" className="flex items-center gap-3 lg:gap-[15px] group z-10 w-[200px]">
-                    <div className="relative flex items-center justify-center w-[65px] h-[40px] lg:w-[65px] lg:h-[40px] rounded-[7px] bg-[#ffc107] shadow-sm group-hover:scale-105 transition-transform duration-300 overflow-hidden">
+                <Link href="/" className="flex items-center gap-3 lg:gap-3.75 group z-10 w-50">
+                    <div className="relative flex items-center justify-center w-16.25 h-10 lg:w-16.25 lg:h-10 rounded-[7px] bg-[#ffc107] shadow-sm group-hover:scale-105 transition-transform duration-300 overflow-hidden">
                         <Image
                             src="/images/logo.png"
                             alt={siteConfig.name}
@@ -27,10 +27,10 @@ export const Navbar = () => {
                             className="object-cover"
                         />
                     </div>
-                    <span className="font-bold text-[16px] lg:text-[18px] tracking-tight text-[#121212] leading-[18px]">
+                    <span className="font-bold text-[16px] lg:text-[18px] tracking-tight text-[#121212] leading-4.5">
                         {siteConfig.name}
                     </span>
-                </a>
+                </Link>
 
                 {/* Desktop Navigation */}
                 <nav className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center justify-center gap-8 lg:gap-[43.5px]">
@@ -38,18 +38,18 @@ export const Navbar = () => {
                         <Link
                             key={item.href}
                             href={item.href}
-                            className="relative text-[14px] lg:text-[15px] font-bold text-[#121212] hover:text-[#ffc107] transition-colors leading-[20px] group"
+                            className="relative text-[14px] lg:text-[15px] font-bold text-[#121212] hover:text-[#ffc107] transition-colors leading-5 group"
                         >
                             {item.title}
-                            <span className="absolute left-0 -bottom-1.5 w-0 h-[2px] bg-[#ffc107] transition-all duration-300 group-hover:w-full rounded-full" />
+                            <span className="absolute left-0 -bottom-1.5 w-0 h-0.5 bg-[#ffc107] transition-all duration-300 group-hover:w-full rounded-full" />
                         </Link>
                     ))}
                 </nav>
 
                 {/* Right Action: Button */}
-                <div className="hidden lg:flex shrink-0 z-10 w-[200px] justify-end">
+                <div className="hidden lg:flex shrink-0 z-10 w-50 justify-end">
                     <Button
-                        className="bg-[#ffc107] hover:bg-[#e0a800] text-[#121212] font-bold text-[14px] lg:text-[15px] w-[160px] h-[44px] rounded-[10px] shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1),0px_2px_4px_-2px_rgba(0,0,0,0.1)] transition-transform hover:scale-105 active:scale-95"
+                        className="bg-[#ffc107] hover:bg-[#e0a800] text-[#121212] font-bold text-[14px] lg:text-[15px] w-40 h-11 rounded-[10px] shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1),0px_2px_4px_-2px_rgba(0,0,0,0.1)] transition-transform hover:scale-105 active:scale-95"
                     >
                         Get App
                     </Button>
@@ -86,7 +86,7 @@ export const Navbar = () => {
                                 </Link>
                             ))}
                             <div className="pt-6">
-                                <Button className="w-full bg-[#ffc107] hover:bg-[#e0a800] text-[#121212] font-bold text-[18px] py-6 shadow-md rounded-[12px]">
+                                <Button className="w-full bg-[#ffc107] hover:bg-[#e0a800] text-[#121212] font-bold text-[18px] py-6 shadow-md rounded-xl">
                                     Get App
                                 </Button>
                             </div>

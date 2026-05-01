@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Section, Container } from "@/components/layout/Section";
-import { slideInFromBottom, fadeIn } from "@/components/ui/framer-variants";
+import { slideInFromBottom, fadeIn } from "@/constants/framer-variants";
 import { Button } from "@/components/ui/Button";
 
 export function CTASection() {
@@ -40,7 +40,7 @@ export function CTASection() {
                     >
                         {/* Get Started Button */}
                         <Button
-                            className="bg-black hover:bg-[#1f1f1f] shadow-none text-white font-bold text-[18px] lg:text-[21px] px-8 py-7 lg:py-8 lg:px-[45px] rounded-[13px] w-full sm:w-auto flex items-center justify-center gap-[10px] transition-all duration-300"
+                            className="bg-black hover:bg-[#1f1f1f] shadow-none text-white font-bold text-[18px] lg:text-[21px] px-8 py-7 lg:py-8 lg:px-11.25 rounded-[13px] w-full sm:w-auto flex items-center justify-center gap-2.5 transition-all duration-300"
                         >
                             Get Started Free
                             <ArrowRight className="w-5 h-5" />
@@ -48,7 +48,7 @@ export function CTASection() {
 
                         {/* Request a Demo Button */}
                         <Button
-                            className="bg-transparent shadow-none border-[2.6px] border-black text-black hover:bg-black/5 font-bold text-[18px] lg:text-[21px] px-8 py-7 lg:py-8 lg:px-[45px] rounded-[13px] w-full sm:w-auto transition-all duration-300"
+                            className="bg-transparent shadow-none border-[2.6px] border-black text-black hover:bg-black/5 font-bold text-[18px] lg:text-[21px] px-8 py-7 lg:py-8 lg:px-11.25 rounded-[13px] w-full sm:w-auto transition-all duration-300"
                         >
                             Request a Demo
                         </Button>

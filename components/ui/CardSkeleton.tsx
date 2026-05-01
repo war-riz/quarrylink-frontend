@@ -2,9 +2,9 @@ import { Skeleton } from "@/components/ui/Skeleton";
 
 export function ServiceCardSkeleton() {
     return (
-        <div className="bg-white rounded-t-[10px] rounded-b-[24px] shadow-sm w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-22px)] max-w-[300px] flex flex-col p-1 pb-6 border border-zinc-100">
+        <div className="bg-white rounded-t-[10px] rounded-b-3xl shadow-sm w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-22px)] max-w-75 flex flex-col p-1 pb-6 border border-zinc-100">
             {/* Image Placeholder */}
-            <Skeleton className="w-full aspect-3/2 rounded-[8px]" />
+            <Skeleton className="w-full aspect-3/2 rounded-lg" />
 
             {/* Content Placeholders */}
             <div className="flex flex-col gap-3 px-5 pt-5">
@@ -24,9 +24,9 @@ export function ServiceCardSkeleton() {
 
 export function ShowcaseCardSkeleton() {
     return (
-        <div className="bg-[#1a1a1a] border border-[#1e2939] rounded-[12px] p-6 lg:p-10 flex flex-col w-full h-[320px]">
+        <div className="bg-[#1a1a1a] border border-[#1e2939] rounded-xl p-6 lg:p-10 flex flex-col w-full h-80">
             {/* Card Icon */}
-            <Skeleton className="w-[60px] h-[60px] rounded-[10px] bg-[#2a2a2a] mb-6 lg:mb-8" />
+            <Skeleton className="w-15 h-15 rounded-[10px] bg-[#2a2a2a] mb-6 lg:mb-8" />
 
             {/* Content Placeholders */}
             <div className="flex-1 flex flex-col gap-4">

@@ -14,21 +14,21 @@ export function Footer() {
                 {/* Main Footer Content */}
                 <div className="flex flex-col lg:flex-row justify-between gap-12 lg:gap-8 mb-16">
                     {/* Brand Column */}
-                    <div className="w-full lg:max-w-[460px] flex flex-col items-start">
-                        <a href="/" className="flex items-center gap-[15px] group mb-6">
-                            <div className="relative flex items-center justify-center w-[65px] h-[40px] rounded-[7px] bg-[#ffc107] overflow-hidden">
+                    <div className="w-full lg:max-w-115 flex flex-col items-start">
+                        <Link href="/" className="flex items-center gap-3.75 group mb-6">
+                            <div className="relative flex items-center justify-center w-16.25 h-10 rounded-[7px] bg-[#ffc107] overflow-hidden">
                                 <Image
                                     src="/images/logo.png"
                                     alt={siteConfig.name}
                                     fill
                                     sizes="65px"
-                                    className="object-contain p-[5px]"
+                                    className="object-contain p-1.25"
                                 />
                             </div>
                             <span className="font-bold text-[24px] text-white">{siteConfig.name}</span>
-                        </a>
+                        </Link>
 
-                        <p className="font-normal text-[14.5px] text-white/70 leading-relaxed mb-8 max-w-[400px]">
+                        <p className="font-normal text-[14.5px] text-white/70 leading-relaxed mb-8 max-w-100">
                             Revolutionizing quarry logistics in Nigeria with AI-powered supply chain management...
                         </p>
 
@@ -56,7 +56,7 @@ export function Footer() {
                     </div>
 
                     {/* Links Columns Container */}
-                    <div className="flex flex-col sm:flex-row flex-wrap lg:flex-nowrap gap-12 sm:gap-16 lg:gap-[90px]">
+                    <div className="flex flex-col sm:flex-row flex-wrap lg:flex-nowrap gap-12 sm:gap-16 lg:gap-22.5">
                         {/* Product */}
                         <div className="flex flex-col gap-6">
                             <h3 className="font-bold text-[22px] lg:text-[26.5px] text-white">Product</h3>

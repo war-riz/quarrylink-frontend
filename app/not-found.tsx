@@ -12,7 +12,7 @@ export default function NotFound() {
     return (
         <div className="min-h-screen bg-[#F4F4F7] flex flex-col justify-center relative overflow-hidden">
             {/* Decorative background elements */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#ffc107]/10 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 bg-[#ffc107]/10 blur-[120px] rounded-full pointer-events-none" />
 
             <Container className="flex flex-col items-center justify-center text-center relative z-10 py-20">
                 <motion.div
@@ -46,7 +46,7 @@ export default function NotFound() {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.5, delay: 0.3 }}
-                    className="font-normal text-[18px] text-zinc-500 max-w-[500px] mx-auto mb-12 leading-relaxed"
+                    className="font-normal text-[18px] text-zinc-500 max-w-125 mx-auto mb-12 leading-relaxed"
                 >
                     Looks like this page is still being excavated! The link you clicked may be broken, or the page has been moved.
                 </motion.p>
@@ -58,7 +58,7 @@ export default function NotFound() {
                 >
                     <Button
                         onClick={() => router.back()}
-                        className="bg-black hover:bg-zinc-800 text-white font-bold text-[18px] px-8 py-7 rounded-[12px] flex items-center justify-center gap-3"
+                        className="bg-black hover:bg-zinc-800 text-white font-bold text-[18px] px-8 py-7 rounded-xl flex items-center justify-center gap-3"
                     >
                         <ArrowLeft className="w-5 h-5 shrink-0" />
                         <span>Return Back</span>
