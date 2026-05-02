@@ -47,12 +47,19 @@ export const Navbar = () => {
                 </nav>
 
                 {/* Right Action: Button */}
-                <div className="hidden lg:flex shrink-0 z-10 w-50 justify-end">
+                <div className="hidden lg:flex shrink-0 z-10 w-50 justify-end space-x-4">
                     <Button
                         className="bg-[#ffc107] hover:bg-[#e0a800] text-[#121212] font-bold text-[14px] lg:text-[15px] w-40 h-11 rounded-[10px] shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1),0px_2px_4px_-2px_rgba(0,0,0,0.1)] transition-transform hover:scale-105 active:scale-95"
                     >
                         Get App
                     </Button>
+                    <Link href="/login">
+                        <Button
+                            className="bg-[#ffc107] hover:bg-[#e0a800] text-[#121212] font-bold text-[14px] lg:text-[15px] w-40 h-11 rounded-[10px] shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1),0px_2px_4px_-2px_rgba(0,0,0,0.1)] transition-transform hover:scale-105 active:scale-95 "
+                        >
+                            Sign in
+                        </Button>
+                    </Link>
                 </div>
 
                 {/* Mobile Menu Toggle */}
