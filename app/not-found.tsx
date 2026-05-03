@@ -48,7 +48,7 @@ export default function NotFound() {
                     transition={{ duration: 0.5, delay: 0.3 }}
                     className="font-normal text-[18px] text-zinc-500 max-w-125 mx-auto mb-12 leading-relaxed"
                 >
-                    Looks like this page is still being excavated! The link you clicked may be broken, or the page has been moved.
+                    Looks like this page is still being excavated! The link you clicked might be broken, or the page has been moved.
                 </motion.p>
 
                 <motion.div
