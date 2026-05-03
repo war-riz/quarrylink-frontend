@@ -92,10 +92,15 @@ export const Navbar = () => {
                                     {item.title}
                                 </Link>
                             ))}
-                            <div className="pt-6">
+                            <div className="pt-6 space-y-4">
                                 <Button className="w-full bg-[#ffc107] hover:bg-[#e0a800] text-[#121212] font-bold text-[18px] py-6 shadow-md rounded-xl">
                                     Get App
                                 </Button>
+                                <Link href="/login">
+                                <Button className="w-full bg-[#ffc107] hover:bg-[#e0a800] text-[#121212] font-bold text-[18px] py-6 shadow-md rounded-xl">
+                                    Sign in 
+                                </Button>
+                                </Link>
                             </div>
                         </div>
                     </motion.div>
