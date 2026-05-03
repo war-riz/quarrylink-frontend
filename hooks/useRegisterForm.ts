@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { AccountType } from "@/constants/registerConstants";
 
 export interface RegisterFormState {
@@ -31,6 +32,7 @@ export interface RegisterFormActions {
 }
 
 export function useRegisterForm(): RegisterFormState & RegisterFormActions {
+  const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -65,9 +67,11 @@ export function useRegisterForm(): RegisterFormState & RegisterFormActions {
       // 🔌 Replace with your real registration call:
       // await registerUser({ firstName, lastName, email, phone, password, accountType });
       await new Promise((res) => setTimeout(res, 1500));
+
+      // ✅ Redirect to verify page, passing email as query param
+      router.push(`/verify?email=${encodeURIComponent(email)}`);
     } catch {
       setError("Something went wrong. Please try again.");
-    } finally {
       setIsLoading(false);
     }
   };

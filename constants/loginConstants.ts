@@ -12,7 +12,7 @@ export const LOGIN_COPY = {
     "Sign in to manage orders, track deliveries in real-time, and connect with Nigeria's largest verified supplier network.",
   formHeading: "Sign in",
   formSub: "No account?",
-  formSubLink: "Create one free",
+  formSubLink: "Create free Account",
   formSubLinkHref: "/register",
   rememberLabel: "Remember me for 30 days",
   submitLabel: "Sign in",
