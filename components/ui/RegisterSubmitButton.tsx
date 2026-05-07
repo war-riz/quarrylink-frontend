@@ -6,20 +6,23 @@ import { REGISTER_COPY } from "@/constants/registerConstants";
 
 interface RegisterSubmitButtonProps {
   isLoading: boolean;
+  disabled?: boolean;
 }
 
-export function RegisterSubmitButton({ isLoading }: RegisterSubmitButtonProps) {
+export function RegisterSubmitButton({ isLoading, disabled }: RegisterSubmitButtonProps) {
+  const isDisabled = isLoading || disabled;
+
   return (
     <button
       type="submit"
-      disabled={isLoading}
+      disabled={isDisabled}
       className={cn(
         "w-full h-12 rounded-xl font-bold text-[15px]",
-        "bg-[#ffc107] hover:bg-[#e0a800] text-[#121212]",
         "flex items-center justify-center gap-2.5",
-        "shadow-[0_4px_14px_rgba(255,193,7,0.35)] hover:shadow-[0_6px_20px_rgba(255,193,7,0.45)]",
-        "transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]",
-        "disabled:opacity-70 disabled:cursor-not-allowed disabled:scale-100 disabled:shadow-none"
+        "transition-all duration-200",
+        isDisabled
+          ? "bg-zinc-200 text-zinc-400 cursor-not-allowed shadow-none"
+          : "bg-[#ffc107] hover:bg-[#e0a800] text-[#121212] shadow-[0_4px_14px_rgba(255,193,7,0.35)] hover:shadow-[0_6px_20px_rgba(255,193,7,0.45)] hover:scale-[1.01] active:scale-[0.99]"
       )}
     >
       {isLoading ? (
