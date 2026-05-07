@@ -14,7 +14,6 @@ export function useVerifyForm(email: string) {
   const [isResending, setIsResending] = useState(false);
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
-  // Start cooldown timer on mount
   useEffect(() => {
     setResendCooldown(VERIFY_COPY.resendCooldown);
   }, []);
@@ -30,14 +29,11 @@ export function useVerifyForm(email: string) {
   };
 
   const handleChange = (index: number, value: string) => {
-    // Allow only digits
     const digit = value.replace(/\D/g, "").slice(-1);
     const newCode = [...code];
     newCode[index] = digit;
     setCode(newCode);
     setError(null);
-
-    // Auto-advance
     if (digit && index < VERIFY_COPY.codeLength - 1) {
       focusInput(index + 1);
     }
@@ -83,7 +79,8 @@ export function useVerifyForm(email: string) {
       // await verifyEmail({ email, code: fullCode });
       await new Promise((res) => setTimeout(res, 1500));
       setIsSuccess(true);
-      setTimeout(() => router.push("/dashboard"), 2000);
+      // ✅ After email verification → go to KYC identity check
+      setTimeout(() => router.push("/kyc"), 2000);
     } catch {
       setError("Invalid or expired code. Please try again.");
       setCode(Array(VERIFY_COPY.codeLength).fill(""));

@@ -27,43 +27,31 @@ function StepIndicator({ step }: { step: 1 | 2 }) {
 
         return (
           <div key={n} className="flex items-center flex-1 last:flex-none">
-            {/* Circle */}
             <div className="flex flex-col items-center gap-1">
-              <div
-                className={cn(
-                  "w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-bold border-2 transition-all duration-300",
-                  isComplete
-                    ? "bg-[#ffc107] border-[#ffc107] text-[#121212]"
-                    : isActive
-                    ? "bg-[#121212] border-[#121212] text-white"
-                    : "bg-white border-zinc-200 text-zinc-400"
-                )}
-              >
+              <div className={cn(
+                "w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-bold border-2 transition-all duration-300",
+                isComplete ? "bg-[#ffc107] border-[#ffc107] text-[#121212]"
+                  : isActive ? "bg-[#121212] border-[#121212] text-white"
+                  : "bg-white border-zinc-200 text-zinc-400"
+              )}>
                 {isComplete ? (
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
-                ) : (
-                  n
-                )}
+                ) : n}
               </div>
-              <span
-                className={cn(
-                  "text-[11px] font-semibold whitespace-nowrap transition-colors duration-300",
-                  isActive ? "text-[#121212]" : isComplete ? "text-[#ffc107]" : "text-zinc-400"
-                )}
-              >
+              <span className={cn(
+                "text-[11px] font-semibold whitespace-nowrap transition-colors duration-300",
+                isActive ? "text-[#121212]" : isComplete ? "text-[#ffc107]" : "text-zinc-400"
+              )}>
                 {label}
               </span>
             </div>
 
-            {/* Connector line — only between steps */}
             {i < steps.length - 1 && (
               <div className="flex-1 h-[2px] mx-2 mb-5 rounded-full overflow-hidden bg-zinc-200">
-                <div
-                  className="h-full bg-[#ffc107] transition-all duration-500"
-                  style={{ width: step > n ? "100%" : "0%" }}
-                />
+                <div className="h-full bg-[#ffc107] transition-all duration-500"
+                  style={{ width: step > n ? "100%" : "0%" }} />
               </div>
             )}
           </div>
@@ -82,11 +70,13 @@ export function RegisterFormPanel() {
     showPassword, showConfirmPassword,
     isLoading, error,
     nokName, nokRelationship, nokPhone, nokEmail, nokAddress,
+    consent,                          // ← consent state
     setFirstName, setLastName, setEmail, setPhone,
     setPassword, setConfirmPassword, setAccountType,
     toggleShowPassword, toggleShowConfirmPassword,
     handleNext, handleBack, handleSubmit,
     setNokName, setNokRelationship, setNokPhone, setNokEmail, setNokAddress,
+    toggleConsent,                    // ← consent toggle
   } = useRegisterForm();
 
   return (
@@ -117,10 +107,8 @@ export function RegisterFormPanel() {
             </h2>
             <p className="text-[14px] font-normal text-zinc-500">
               {REGISTER_COPY.formSub}{" "}
-              <Link
-                href={REGISTER_COPY.formSubLinkHref}
-                className="text-[#121212] font-bold underline underline-offset-2 hover:text-[#ffc107] transition-colors"
-              >
+              <Link href={REGISTER_COPY.formSubLinkHref}
+                className="text-[#121212] font-bold underline underline-offset-2 hover:text-[#ffc107] transition-colors">
                 {REGISTER_COPY.formSubLink}
               </Link>
             </p>
@@ -132,54 +120,39 @@ export function RegisterFormPanel() {
           {/* Error */}
           {error && <LoginErrorBanner message={error} />}
 
-          {/* ── STEP 1 ── */}
           <AnimatePresence mode="wait">
+
+            {/* ── STEP 1 ── */}
             {step === 1 && (
-              <motion.div
-                key="step1"
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-                transition={{ duration: 0.25 }}
-              >
-                {/* Social + divider only on step 1 */}
+              <motion.div key="step1"
+                initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.25 }}>
+
                 <RegisterSocialButtons />
 
                 <form onSubmit={handleNext} className="flex flex-col gap-5 mt-1">
                   <Step1Fields
-                    firstName={firstName}
-                    lastName={lastName}
-                    email={email}
-                    phone={phone}
-                    password={password}
-                    confirmPassword={confirmPassword}
+                    firstName={firstName} lastName={lastName}
+                    email={email} phone={phone}
+                    password={password} confirmPassword={confirmPassword}
                     accountType={accountType}
-                    showPassword={showPassword}
-                    showConfirmPassword={showConfirmPassword}
-                    onFirstNameChange={setFirstName}
-                    onLastNameChange={setLastName}
-                    onEmailChange={setEmail}
-                    onPhoneChange={setPhone}
-                    onPasswordChange={setPassword}
-                    onConfirmPasswordChange={setConfirmPassword}
+                    showPassword={showPassword} showConfirmPassword={showConfirmPassword}
+                    onFirstNameChange={setFirstName} onLastNameChange={setLastName}
+                    onEmailChange={setEmail} onPhoneChange={setPhone}
+                    onPasswordChange={setPassword} onConfirmPasswordChange={setConfirmPassword}
                     onAccountTypeChange={setAccountType}
                     onToggleShowPassword={toggleShowPassword}
                     onToggleShowConfirmPassword={toggleShowConfirmPassword}
                   />
 
-                  {/* Next button */}
-                  <button
-                    type="submit"
-                    className={cn(
-                      "w-full h-12 rounded-xl font-bold text-[15px]",
-                      "bg-[#ffc107] hover:bg-[#e0a800] text-[#121212]",
-                      "flex items-center justify-center gap-2.5",
-                      "shadow-[0_4px_14px_rgba(255,193,7,0.35)] hover:shadow-[0_6px_20px_rgba(255,193,7,0.45)]",
-                      "transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
-                    )}
-                  >
-                    Next
-                    <ArrowRight className="w-4.5 h-4.5" />
+                  <button type="submit" className={cn(
+                    "w-full h-12 rounded-xl font-bold text-[15px]",
+                    "bg-[#ffc107] hover:bg-[#e0a800] text-[#121212]",
+                    "flex items-center justify-center gap-2.5",
+                    "shadow-[0_4px_14px_rgba(255,193,7,0.35)] hover:shadow-[0_6px_20px_rgba(255,193,7,0.45)]",
+                    "transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
+                  )}>
+                    Next <ArrowRight className="w-4.5 h-4.5" />
                   </button>
                 </form>
               </motion.div>
@@ -187,66 +160,47 @@ export function RegisterFormPanel() {
 
             {/* ── STEP 2 ── */}
             {step === 2 && (
-              <motion.div
-                key="step2"
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-                transition={{ duration: 0.25 }}
-              >
+              <motion.div key="step2"
+                initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.25 }}>
+
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                   <Step2Fields
-                    nokName={nokName}
-                    nokRelationship={nokRelationship}
-                    nokPhone={nokPhone}
-                    nokEmail={nokEmail}
-                    nokAddress={nokAddress}
-                    onNokNameChange={setNokName}
-                    onNokRelationshipChange={setNokRelationship}
-                    onNokPhoneChange={setNokPhone}
-                    onNokEmailChange={setNokEmail}
+                    nokName={nokName} nokRelationship={nokRelationship}
+                    nokPhone={nokPhone} nokEmail={nokEmail} nokAddress={nokAddress}
+                    consent={consent}                 
+                    onNokNameChange={setNokName} onNokRelationshipChange={setNokRelationship}
+                    onNokPhoneChange={setNokPhone} onNokEmailChange={setNokEmail}
                     onNokAddressChange={setNokAddress}
+                    onToggleConsent={toggleConsent}   
                   />
 
-                  {/* Back + Submit row */}
+                  {/* Back + Create Account */}
                   <div className="flex gap-3">
-                    <button
-                      type="button"
-                      onClick={handleBack}
-                      className={cn(
-                        "h-12 px-5 rounded-xl font-bold text-[14px]",
-                        "border-2 border-zinc-200 bg-white text-zinc-600",
-                        "flex items-center justify-center gap-2",
-                        "hover:border-zinc-300 hover:bg-zinc-50",
-                        "transition-all duration-200 active:scale-[0.99]"
-                      )}
-                    >
-                      <ArrowLeft className="w-4 h-4" />
-                      Back
+                    <button type="button" onClick={handleBack} className={cn(
+                      "h-12 px-5 rounded-xl font-bold text-[14px]",
+                      "border-2 border-zinc-200 bg-white text-zinc-600",
+                      "flex items-center justify-center gap-2",
+                      "hover:border-zinc-300 hover:bg-zinc-50",
+                      "transition-all duration-200 active:scale-[0.99]"
+                    )}>
+                      <ArrowLeft className="w-4 h-4" /> Back
                     </button>
 
-                    <button
-                      type="submit"
-                      disabled={isLoading}
-                      className={cn(
-                        "flex-1 h-12 rounded-xl font-bold text-[15px]",
-                        "bg-[#ffc107] hover:bg-[#e0a800] text-[#121212]",
-                        "flex items-center justify-center gap-2.5",
-                        "shadow-[0_4px_14px_rgba(255,193,7,0.35)] hover:shadow-[0_6px_20px_rgba(255,193,7,0.45)]",
-                        "transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]",
-                        "disabled:opacity-70 disabled:cursor-not-allowed disabled:scale-100 disabled:shadow-none"
-                      )}
-                    >
+                    {/* Disabled until consent is ticked */}
+                    <button type="submit" disabled={isLoading || !consent} className={cn(
+                      "flex-1 h-12 rounded-xl font-bold text-[15px]",
+                      "flex items-center justify-center gap-2.5",
+                      "transition-all duration-200",
+                      !consent
+                        ? "bg-zinc-200 text-zinc-400 cursor-not-allowed shadow-none"
+                        : "bg-[#ffc107] hover:bg-[#e0a800] text-[#121212] shadow-[0_4px_14px_rgba(255,193,7,0.35)] hover:shadow-[0_6px_20px_rgba(255,193,7,0.45)] hover:scale-[1.01] active:scale-[0.99]",
+                      isLoading && "opacity-70 cursor-not-allowed scale-100 shadow-none"
+                    )}>
                       {isLoading ? (
-                        <>
-                          <Loader2 className="w-4.5 h-4.5 animate-spin" />
-                          {REGISTER_COPY.submittingLabel}
-                        </>
+                        <><Loader2 className="w-4.5 h-4.5 animate-spin" />{REGISTER_COPY.submittingLabel}</>
                       ) : (
-                        <>
-                          {REGISTER_COPY.submitLabel}
-                          <ArrowRight className="w-4.5 h-4.5" />
-                        </>
+                        <>{REGISTER_COPY.submitLabel} <ArrowRight className="w-4.5 h-4.5" /></>
                       )}
                     </button>
                   </div>

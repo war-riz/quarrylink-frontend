@@ -22,6 +22,7 @@ export interface RegisterFormState {
   nokPhone: string;
   nokEmail: string;
   nokAddress: string;
+  consent: boolean;                   // ← added
 }
 
 export interface RegisterFormActions {
@@ -42,13 +43,13 @@ export interface RegisterFormActions {
   setNokPhone: (v: string) => void;
   setNokEmail: (v: string) => void;
   setNokAddress: (v: string) => void;
+  toggleConsent: () => void;          // ← added
 }
 
 export function useRegisterForm(): RegisterFormState & RegisterFormActions {
   const router = useRouter();
 
   const [step, setStep] = useState<1 | 2>(1);
-
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -60,15 +61,16 @@ export function useRegisterForm(): RegisterFormState & RegisterFormActions {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   const [nokName, setNokName] = useState("");
   const [nokRelationship, setNokRelationship] = useState("");
   const [nokPhone, setNokPhone] = useState("");
   const [nokEmail, setNokEmail] = useState("");
   const [nokAddress, setNokAddress] = useState("");
+  const [consent, setConsent] = useState(false);   // ← added
 
   const toggleShowPassword = () => setShowPassword((p) => !p);
   const toggleShowConfirmPassword = () => setShowConfirmPassword((p) => !p);
+  const toggleConsent = () => setConsent((p) => !p); // ← added
 
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,6 +131,10 @@ export function useRegisterForm(): RegisterFormState & RegisterFormActions {
       setError("Please enter your next of kin's physical address.");
       return;
     }
+    if (!consent) {
+      setError("You must agree to the Terms of Service and Privacy Policy to continue.");
+      return;
+    }
 
     setIsLoading(true);
     try {
@@ -152,11 +158,13 @@ export function useRegisterForm(): RegisterFormState & RegisterFormActions {
     showPassword, showConfirmPassword,
     isLoading, error,
     nokName, nokRelationship, nokPhone, nokEmail, nokAddress,
+    consent,                           // ← added
     setFirstName, setLastName, setEmail, setPhone,
     setPassword, setConfirmPassword,
     setAccountType: setAccountType as (v: AccountType) => void,
     toggleShowPassword, toggleShowConfirmPassword,
     handleNext, handleBack, handleSubmit,
     setNokName, setNokRelationship, setNokPhone, setNokEmail, setNokAddress,
+    toggleConsent,                     // ← added
   };
 }
