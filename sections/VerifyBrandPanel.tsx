@@ -3,27 +3,47 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ShieldCheck, Clock, RefreshCcw } from "lucide-react";
+import { Mail, Phone, ShieldCheck, Clock, RefreshCcw } from "lucide-react";
 import { siteConfig } from "@/constants/navigation";
 
-const TIPS = [
-  { icon: ShieldCheck, text: "Your code is valid for 10 minutes" },
-  { icon: Clock,       text: "Check your spam folder if you don't see it" },
-  { icon: RefreshCcw,  text: "You can request a new code after 30 seconds" },
+const EMAIL_TIPS = [
+  { icon: Mail,        text: "Check your spam or junk folder" },
+  { icon: Clock,       text: "Code expires in 10 minutes" },
+  { icon: RefreshCcw,  text: "Request a new code after 30 seconds" },
+  { icon: ShieldCheck, text: "We never ask for your code via call or chat" },
 ];
 
-export function VerifyBrandPanel() {
+const PHONE_TIPS = [
+  { icon: Phone,       text: "Make sure your phone can receive SMS" },
+  { icon: Clock,       text: "Code expires in 10 minutes" },
+  { icon: RefreshCcw,  text: "Request a new code after 30 seconds" },
+  { icon: ShieldCheck, text: "We never ask for your code via call or chat" },
+];
+
+interface VerifyBrandPanelProps {
+  channel?: "email" | "phone";
+}
+
+export function VerifyBrandPanel({ channel = "email" }: VerifyBrandPanelProps) {
+  const tips = channel === "email" ? EMAIL_TIPS : PHONE_TIPS;
+
   return (
     <div className="hidden lg:flex lg:w-[48%] bg-[#121212] relative overflow-hidden flex-col px-14 py-12">
 
-      {/* Decorative glows */}
+      {/* Glows */}
       <div className="absolute bottom-0 left-0 w-[420px] h-[420px] bg-[#ffc107]/20 blur-[100px] rounded-full pointer-events-none" />
       <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-[#ffc107]/5 blur-[60px] rounded-full pointer-events-none" />
 
       {/* Logo */}
       <Link href="/" className="flex items-center gap-3.5 w-fit z-10">
         <div className="relative flex items-center justify-center w-[65px] h-10 rounded-[7px] bg-[#ffc107] overflow-hidden">
-          <Image src="/images/logo.png" alt={siteConfig.name} fill sizes="65px" className="object-contain p-1" />
+          <Image
+            src="/images/logo.png"
+            alt={siteConfig.name}
+            fill
+            sizes="65px"
+            className="object-contain p-1"
+          />
         </div>
         <span className="font-bold text-[20px] text-white">{siteConfig.name}</span>
       </Link>
@@ -36,7 +56,7 @@ export function VerifyBrandPanel() {
         className="flex-1 flex flex-col justify-center z-10"
       >
         <span className="inline-flex items-center gap-2 bg-[#ffc107]/15 border border-[#ffc107]/40 text-[#ffc107] text-[11px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full w-fit mb-6">
-          <span className="w-1.5 h-1.5 bg-[#ffc107] rounded-full" />
+          <span className="w-1.5 h-1.5 bg-[#ffc107] rounded-full animate-pulse" />
           One last step
         </span>
 
@@ -46,12 +66,14 @@ export function VerifyBrandPanel() {
         </h1>
 
         <p className="text-white/50 text-[15px] font-normal leading-relaxed max-w-[300px] mb-10">
-          Verify your email to unlock full access to QuarryLink's supplier network and logistics platform.
+          {channel === "email"
+            ? "Verify your email address to unlock full access to QuarryLink's platform."
+            : "Verify your phone number via SMS to unlock full access to QuarryLink's platform."}
         </p>
 
         {/* Tips */}
         <div className="flex flex-col gap-4">
-          {TIPS.map(({ icon: Icon, text }) => (
+          {tips.map(({ icon: Icon, text }) => (
             <div key={text} className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-lg bg-[#ffc107]/10 border border-[#ffc107]/20 flex items-center justify-center shrink-0">
                 <Icon className="w-4 h-4 text-[#ffc107]" />
@@ -70,7 +92,10 @@ export function VerifyBrandPanel() {
         className="text-[12px] text-white/25 z-10 pt-7 border-t border-white/10"
       >
         Having trouble? Contact us at{" "}
-        <a href="mailto:hello@quarrylink.com" className="text-white/50 hover:text-[#ffc107] transition-colors">
+        <a
+          href="mailto:hello@quarrylink.com"
+          className="text-white/50 hover:text-[#ffc107] transition-colors"
+        >
           hello@quarrylink.com
         </a>
       </motion.p>

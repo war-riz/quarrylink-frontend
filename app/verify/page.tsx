@@ -1,17 +1,29 @@
+"use client";
+
+import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { VerifyBrandPanel } from "@/sections/VerifyBrandPanel";
 import { VerifyFormPanel } from "@/sections/VerifyFormPanel";
+import type { VerifyChannel } from "@/constants/verifyConstants";
 
-interface VerifyPageProps {
-  searchParams: { email?: string };
-}
+export default function VerifyPage() {
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email") ?? "";
+  const phone = searchParams.get("phone") ?? "";
 
-export default function VerifyPage({ searchParams }: VerifyPageProps) {
-  const email = searchParams.email ?? "";
+  const [channel, setChannel] = useState<VerifyChannel>(
+    email ? "email" : "phone"
+  );
 
   return (
     <div className="min-h-screen flex">
-      <VerifyBrandPanel />
-      <VerifyFormPanel email={email} />
+      <VerifyBrandPanel channel={channel} />
+      <VerifyFormPanel
+        email={email}
+        phone={phone}
+        channel={channel}
+        onChannelChange={setChannel}
+      />
     </div>
   );
 }

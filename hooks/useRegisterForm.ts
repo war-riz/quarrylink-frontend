@@ -144,7 +144,7 @@ export function useRegisterForm(): RegisterFormState & RegisterFormActions {
       //   nextOfKin: { name: nokName, relationship: nokRelationship, phone: nokPhone, email: nokEmail, address: nokAddress }
       // });
       await new Promise((res) => setTimeout(res, 1500));
-      router.push(`/verify?email=${encodeURIComponent(email)}`);
+      router.push(`/verify?email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}`);
     } catch {
       setError("Something went wrong. Please try again.");
       setIsLoading(false);
