@@ -5,6 +5,8 @@ import { ArrowRight } from "lucide-react";
 import { Section, Container } from "@/components/layout/Section";
 import { slideInFromBottom, fadeIn } from "@/constants/framer-variants";
 import { Button } from "@/components/ui/Button";
+import Link from "next/link";
+import { LOGIN_COPY } from "@/constants/loginConstants";
 
 export function CTASection() {
     return (
@@ -39,12 +41,14 @@ export function CTASection() {
                         className="flex flex-col sm:flex-row gap-4 lg:gap-6 justify-center w-full sm:w-auto relative z-10"
                     >
                         {/* Get Started Button */}
-                        <Button
+                        <Link href={LOGIN_COPY.formSubLinkHref}>
+                        <Button 
                             className="bg-black hover:bg-[#1f1f1f] shadow-none text-white font-bold text-[18px] lg:text-[21px] px-8 py-7 lg:py-8 lg:px-11.25 rounded-[13px] w-full sm:w-auto flex items-center justify-center gap-2.5 transition-all duration-300"
                         >
                             Get Started Free
                             <ArrowRight className="w-5 h-5" />
                         </Button>
+                        </Link>
 
                         {/* Request a Demo Button */}
                         <Button

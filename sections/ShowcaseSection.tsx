@@ -7,6 +7,8 @@ import { Section, Container } from "@/components/layout/Section";
 import { slideInFromBottom, fadeIn, staggerContainer } from "@/constants/framer-variants";
 import { showcaseData } from "@/constants/showcase";
 import { ImageWithSkeleton } from "@/components/ui/ImageWithSkeleton";
+import { register } from "module";
+import { LOGIN_COPY } from "@/constants/loginConstants";
 
 export function ShowcaseSection() {
     return (
@@ -92,7 +94,7 @@ export function ShowcaseSection() {
 
                                 {/* Link Button */}
                                 <Link
-                                    href={spec.linkUrl}
+                                    href= {LOGIN_COPY.formSubLinkHref}
                                     className="mt-auto inline-flex items-center gap-2 font-normal text-[17px] text-[#f59e0b] hover:text-[#ffc107] hover:gap-3 transition-all duration-300 w-fit"
                                 >
                                     {spec.linkText}
