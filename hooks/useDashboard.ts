@@ -5,19 +5,11 @@ import {
   DashboardTab,
   Material,
   Order,
-  OrderStatus,
+  OrderFormState,
   MOCK_MATERIALS,
   MOCK_ORDERS,
   MOCK_STATS,
 } from "@/constants/dashboardConstants";
-
-export interface OrderFormState {
-  material: Material | null;
-  quantity: number;
-  address: string;
-  paymentMethod: "card" | "bank_transfer" | "";
-  step: "details" | "payment" | "confirm" | "success";
-}
 
 export function useDashboard() {
   const [activeTab, setActiveTab] = useState<DashboardTab>("overview");
@@ -32,7 +24,7 @@ export function useDashboard() {
     material: null,
     quantity: 1,
     address: "",
-    paymentMethod: "",
+    paymentMethod: null,
     step: "details",
   });
 
@@ -52,7 +44,7 @@ export function useDashboard() {
       material,
       quantity: material.minOrder,
       address: "24 Adeola Odeku Street, Victoria Island, Lagos",
-      paymentMethod: "",
+      paymentMethod: null,
       step: "details",
     });
     setIsOrderModalOpen(true);

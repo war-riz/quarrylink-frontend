@@ -1,29 +1,16 @@
-"use client";
-
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { VerifyBrandPanel } from "@/sections/VerifyBrandPanel";
-import { VerifyFormPanel } from "@/sections/VerifyFormPanel";
-import type { VerifyChannel } from "@/constants/verifyConstants";
+import { Suspense } from "react";
+import { VerifyPageInner } from "@/sections/VerifyPageInner";
 
 export default function VerifyPage() {
-  const searchParams = useSearchParams();
-  const email = searchParams.get("email") ?? "";
-  const phone = searchParams.get("phone") ?? "";
-
-  const [channel, setChannel] = useState<VerifyChannel>(
-    email ? "email" : "phone"
-  );
-
   return (
-    <div className="min-h-screen flex">
-      <VerifyBrandPanel channel={channel} />
-      <VerifyFormPanel
-        email={email}
-        phone={phone}
-        channel={channel}
-        onChannelChange={setChannel}
-      />
-    </div>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-white">
+          <div className="w-8 h-8 border-4 border-[#ffc107] border-t-transparent rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <VerifyPageInner />
+    </Suspense>
   );
-}
+} 
