@@ -159,16 +159,6 @@ export const MOCK_MATERIALS: Material[] = [
   },
 ];
 
-// ── Order form state ──────────────────────────────────────────────
-
-export interface OrderFormState {
-  material: Material | null;
-  quantity: number;
-  address: string;
-  paymentMethod: "card" | "bank_transfer" | null;
-  step: "details" | "payment" | "confirm" | "success";
-}
-
 // ── Mock orders ────────────────────────────────────────────────────
 
 export interface Order {
