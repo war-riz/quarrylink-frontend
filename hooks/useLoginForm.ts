@@ -1,6 +1,17 @@
 "use client";
 
+/**
+ * useLoginForm — updated to use dummy auth + role-based routing.
+ * 🔌 Replace authenticateUser() with real API call (NextAuth, Supabase, etc.)
+ */
+
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  authenticateUser,
+  saveSession,
+  ROLE_CONFIG,
+} from "@/constants/dummyUsers";
 
 export interface LoginFormState {
   email: string;
@@ -20,6 +31,7 @@ export interface LoginFormActions {
 }
 
 export function useLoginForm(): LoginFormState & LoginFormActions {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
@@ -35,11 +47,27 @@ export function useLoginForm(): LoginFormState & LoginFormActions {
     setError(null);
     setIsLoading(true);
     try {
-      // 🔌 Replace this with your real auth call:
-      // await signIn("credentials", { email, password, redirect: false });
-      await new Promise((res) => setTimeout(res, 1500));
+      // Simulate network delay
+      await new Promise((res) => setTimeout(res, 800));
+
+      // 🔌 REPLACE WITH REAL AUTH:
+      // const session = await signIn("credentials", {
+      //   email, password, redirect: false
+      // });
+      // if (session?.error) throw new Error(session.error);
+      // const user = await fetch("/api/auth/me").then(r => r.json());
+      // router.push(ROLE_CONFIG[user.role].dashboardPath);
+
+      // STUB: dummy auth
+      const user = authenticateUser(email, password);
+      if (!user) {
+        setError("Invalid email or password. Please try again.");
+        return;
+      }
+      saveSession(user);
+      router.push(ROLE_CONFIG[user.role].dashboardPath);
     } catch {
-      setError("Invalid email or password. Please try again.");
+      setError("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
