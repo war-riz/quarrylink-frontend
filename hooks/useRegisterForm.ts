@@ -85,9 +85,22 @@ export function useRegisterForm(): RegisterFormState & RegisterFormActions {
       return;
     }
     if (!phone.trim()) {
-      setError("Please enter your phone number.");
-      return;
-    }
+  setError("Please enter your phone number.");
+  return;
+}
+const digits = phone.replace(/[\s\-\(\)]/g, "");
+const normalised = digits.startsWith("+234")
+  ? digits
+  : digits.startsWith("234")
+  ? `+${digits}`
+  : digits.startsWith("0")
+  ? `+234${digits.slice(1)}`
+  : digits;
+if (!/^\+234\d{10}$/.test(normalised)) {
+  setError("Please enter a valid Nigerian phone number (e.g. 08012345678).");
+  return;
+}
+setPhone(normalised);
     if (!accountType) {
       setError("Please select an account type.");
       return;

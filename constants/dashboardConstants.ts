@@ -270,3 +270,8 @@ export const MOCK_STATS = {
   pendingDeliveries: 1,
   completedOrders: 9,
 };
+
+
+export function formatRating(value: number): string {
+  return value.toFixed(2) + "★";
+}

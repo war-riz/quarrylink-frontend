@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   LayoutGrid,
   Search,
@@ -10,7 +11,6 @@ import {
   CreditCard,
   User,
   LogOut,
-  Bell,
   ChevronRight,
   ShieldCheck,
   X,
@@ -18,6 +18,7 @@ import {
 import { cn } from "@/lib/utils";
 import { DASHBOARD_NAV, DashboardTab } from "@/constants/dashboardConstants";
 import { siteConfig } from "@/constants/navigation";
+import { clearSession } from "@/constants/dummyUsers";
 
 const iconMap: Record<string, React.ElementType> = {
   grid: LayoutGrid,
@@ -41,6 +42,13 @@ export function DashboardSidebar({
   isMobileOpen,
   onClose,
 }: DashboardSidebarProps) {
+  const router = useRouter();
+
+  const handleSignOut = () => {
+    clearSession();
+    router.push("/login");
+  };
+
   return (
     <>
       {/* Mobile overlay */}
@@ -142,7 +150,11 @@ export function DashboardSidebar({
               </p>
               <p className="text-[11px] text-white/40 truncate">Customer</p>
             </div>
-            <button className="text-white/30 hover:text-white/70 transition-colors">
+            <button
+              onClick={handleSignOut}
+              title="Sign out"
+              className="text-white/30 hover:text-white/70 transition-colors"
+            >
               <LogOut className="w-4 h-4" />
             </button>
           </div>

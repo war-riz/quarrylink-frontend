@@ -38,6 +38,7 @@ import {
 import { cn } from "@/lib/utils";
 import { clearSession } from "@/constants/dummyUsers";
 import { useRouter } from "next/navigation";
+import { NavigateButton, ProofOfDelivery } from "./DriverDeliveryExtras";
 
 type DriverTab = "overview" | "active" | "trips" | "earnings";
 
@@ -261,11 +262,15 @@ function ActiveDeliveryTab() {
             <div>
               <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-wide">Pickup</p>
               <p className="font-semibold text-[13px] text-[#121212]">{trip.pickupAddress}</p>
+              <p className="font-semibold text-[13px] text-[#121212]">{trip.pickupAddress}</p>
+<NavigateButton address={trip.pickupAddress} label="Navigate to Pickup" />
             </div>
             <div>
               <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-wide">Delivery</p>
               <p className="font-semibold text-[13px] text-[#121212]">{trip.deliveryAddress}</p>
             </div>
+            <p className="font-semibold text-[13px] text-[#121212]">{trip.deliveryAddress}</p>
+<NavigateButton address={trip.deliveryAddress} label="Navigate to Delivery" />
           </div>
         </div>
       </div>
@@ -350,14 +355,14 @@ function ActiveDeliveryTab() {
             <Truck className="w-4.5 h-4.5" /> Loading Complete — Depart
           </button>
         )}
-        {tripStatus === "in_transit" && (
-          <button
-            onClick={() => setTripStatus("completed")}
-            className="flex-1 h-12 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold text-[14px] flex items-center justify-center gap-2 transition-all hover:scale-[1.01]"
-          >
-            <CheckCircle2 className="w-4.5 h-4.5" /> Mark as Arrived at Site
-          </button>
-        )}
+       {tripStatus === "in_transit" && (
+  <ProofOfDelivery
+    orderId={trip.orderId}
+    onSubmit={(photos) => {
+      setTripStatus("completed");
+    }}
+  />
+)}
         {tripStatus === "completed" && (
           <div className="flex-1 flex flex-col items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-xl text-center">
             <CheckCircle2 className="w-8 h-8 text-green-500" />

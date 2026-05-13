@@ -12,7 +12,7 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-export type UserRole = "customer" | "supplier" | "driver" | "financial";
+export type UserRole = "customer" | "supplier" | "driver" | "financial" | "pm";
 
 export interface DummyUser {
   id: string;
@@ -76,6 +76,19 @@ export const DUMMY_USERS: DummyUser[] = [
     kycVerified: true,
     location: "Marina, Lagos",
   },
+
+  {
+    id: "usr_005",
+    email: "pm@quarrylink.ng",
+    password: "Test1234!",
+    role: "pm",
+    name: "Adaeze Nwosu",
+    company: "QuarryLink Operations",
+    phone: "+234 801 111 2222",
+    avatar: "AN",
+    kycVerified: true,
+    location: "Victoria Island, Lagos",
+  },
 ];
 
 export const ROLE_CONFIG: Record<
@@ -120,6 +133,15 @@ export const ROLE_CONFIG: Record<
     bg: "#ede9fe",
     icon: "🏦",
     dashboardPath: "/financial/dashboard",
+  },
+
+  pm: {
+    label: "Project Manager",
+    description: "KYC approvals, dispute resolution, platform monitoring",
+    color: "#8b5cf6",
+    bg: "#ede9fe",
+    icon: "🛡️",
+    dashboardPath: "/pm/dashboard",
   },
 };
 

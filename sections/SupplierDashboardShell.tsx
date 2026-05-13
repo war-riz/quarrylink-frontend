@@ -39,6 +39,7 @@ import {
 } from "@/constants/supplierDashboardConstants";
 import { clearSession } from "@/constants/dummyUsers";
 import { useRouter } from "next/navigation";
+import { SupplierOrderActionsBar } from "./SupplierOrderActions";
 
 type SupplierTab = "overview" | "orders" | "inventory" | "earnings";
 
@@ -312,6 +313,10 @@ function SupplierOrders() {
   const [orders, setOrders] = useState(MOCK_SUPPLIER_ORDERS);
   const [selectedOrder, setSelectedOrder] = useState<SupplierOrder | null>(null);
 
+  const handleStatusChange = (id: string, newStatus: any) => {
+  setOrders(prev => prev.map(o => o.id === id ? { ...o, status: newStatus } : o));
+};
+
   const handleAccept = () => {
     if (!selectedOrder) return;
     setOrders(prev => prev.map(o => o.id === selectedOrder.id ? { ...o, status: "accepted" as const } : o));
@@ -356,14 +361,20 @@ function SupplierOrders() {
                     </span>
                   </div>
                 </div>
-                <button onClick={() => setSelectedOrder(order)}
-                  className="shrink-0 px-4 py-2 rounded-xl font-bold text-[13px] bg-zinc-100 hover:bg-zinc-200 text-zinc-600 transition-all">
-                  View
-                </button>
-              </div>
+                <div className="flex items-center gap-2 shrink-0">
+  <SupplierOrderActionsBar
+    order={order}
+    onStatusChange={handleStatusChange}
+  />
+  <button onClick={() => setSelectedOrder(order)}
+    className="shrink-0 px-4 py-2 rounded-xl font-bold text-[13px] bg-zinc-100 hover:bg-zinc-200 text-zinc-600 transition-all">
+    View
+  </button>
+</div>
             </motion.div>
           );
         })}
+        
       </div>
 
       <AnimatePresence>
