@@ -362,15 +362,16 @@ function SupplierOrders() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-  <SupplierOrderActionsBar
-    order={order}
-    onStatusChange={handleStatusChange}
-  />
-  <button onClick={() => setSelectedOrder(order)}
-    className="shrink-0 px-4 py-2 rounded-xl font-bold text-[13px] bg-zinc-100 hover:bg-zinc-200 text-zinc-600 transition-all">
-    View
-  </button>
-</div>
+                  <SupplierOrderActionsBar
+                    order={order}
+                    onStatusChange={handleStatusChange}
+                  />
+                  <button onClick={() => setSelectedOrder(order)}
+                    className="shrink-0 px-4 py-2 rounded-xl font-bold text-[13px] bg-zinc-100 hover:bg-zinc-200 text-zinc-600 transition-all">
+                    View
+                  </button>
+                </div>
+              </div>
             </motion.div>
           );
         })}

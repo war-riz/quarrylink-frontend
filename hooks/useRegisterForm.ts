@@ -1,83 +1,116 @@
 "use client";
 
+/**
+ * useRegisterForm
+ * ─────────────────────────────────────────────────────────────────
+ * Wired to: POST /api/users/auth/register/
+ *
+ * Backend expects:
+ *   email, phone_number, password, password_confirm,
+ *   first_name, last_name, role
+ *
+ * Role mapping (frontend label → backend value):
+ *   customer  → CUSTOMER
+ *   supplier  → AGENT
+ *   driver    → LOGISTICS
+ *   financial → FINANCE
+ *   pm        → PROJECT_MANAGER
+ *
+ * On success (201): user created, OTP sent to email + SMS.
+ * Next step:        route to /verify-otp screen.
+ *
+ * On failure (400): serializer errors returned in `errors` key.
+ * ─────────────────────────────────────────────────────────────────
+ */
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AccountType } from "@/constants/registerConstants";
+
+// ── Types ──────────────────────────────────────────────────────────
+
+export type FrontendRole = "customer" | "supplier" | "driver" | "financial" | "pm";
+
+// Map frontend role slugs → backend enum values
+const ROLE_MAP: Record<FrontendRole, string> = {
+  customer:  "CUSTOMER",
+  supplier:  "AGENT",
+  driver:    "LOGISTICS",
+  financial: "FINANCE",
+  pm:        "PROJECT_MANAGER",
+};
 
 export interface RegisterFormState {
-  step: 1 | 2;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  password: string;
-  confirmPassword: string;
-  accountType: AccountType | "";
-  showPassword: boolean;
-  showConfirmPassword: boolean;
-  isLoading: boolean;
-  error: string | null;
-  nokName: string;
-  nokRelationship: string;
-  nokPhone: string;
-  nokEmail: string;
-  nokAddress: string;
-  consent: boolean;                   // ← added
+  firstName:       string;
+  lastName:        string;
+  email:           string;
+  phone:           string;
+  password:        string;
+  passwordConfirm: string;
+  role:            FrontendRole;
 }
 
-export interface RegisterFormActions {
-  setFirstName: (v: string) => void;
-  setLastName: (v: string) => void;
-  setEmail: (v: string) => void;
-  setPhone: (v: string) => void;
-  setPassword: (v: string) => void;
-  setConfirmPassword: (v: string) => void;
-  setAccountType: (v: AccountType) => void;
-  toggleShowPassword: () => void;
-  toggleShowConfirmPassword: () => void;
-  handleNext: (e: React.FormEvent) => void;
-  handleBack: () => void;
-  handleSubmit: (e: React.FormEvent) => Promise<void>;
-  setNokName: (v: string) => void;
-  setNokRelationship: (v: string) => void;
-  setNokPhone: (v: string) => void;
-  setNokEmail: (v: string) => void;
-  setNokAddress: (v: string) => void;
-  toggleConsent: () => void;          // ← added
-}
+// ── Constants ──────────────────────────────────────────────────────
 
-export function useRegisterForm(): RegisterFormState & RegisterFormActions {
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://quarrylink-backend.onrender.com/api";
+
+// ── Hook ───────────────────────────────────────────────────────────
+
+export function useRegisterForm() {
   const router = useRouter();
 
-  const [step, setStep] = useState<1 | 2>(1);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [accountType, setAccountType] = useState<AccountType | "">("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [nokName, setNokName] = useState("");
-  const [nokRelationship, setNokRelationship] = useState("");
-  const [nokPhone, setNokPhone] = useState("");
-  const [nokEmail, setNokEmail] = useState("");
-  const [nokAddress, setNokAddress] = useState("");
-  const [consent, setConsent] = useState(false);   // ← added
+  const [form, setForm] = useState<RegisterFormState>({
+    firstName:       "",
+    lastName:        "",
+    email:           "",
+    phone:           "",
+    password:        "",
+    passwordConfirm: "",
+    role:            "customer",
+  });
 
-  const toggleShowPassword = () => setShowPassword((p) => !p);
-  const toggleShowConfirmPassword = () => setShowConfirmPassword((p) => !p);
-  const toggleConsent = () => setConsent((p) => !p); // ← added
+  const [loading, setLoading] = useState(false);
+  const [error,   setError]   = useState<string | null>(null);
 
-  const handleNext = (e: React.FormEvent) => {
-    e.preventDefault();
+  // ── Field helpers ────────────────────────────────────────────────
+
+  function setField<K extends keyof RegisterFormState>(
+    key: K,
+    value: RegisterFormState[K]
+  ) {
+    setForm(prev => ({ ...prev, [key]: value }));
+    setError(null);
+  }
+
+  // ── Phone normalisation ──────────────────────────────────────────
+  // Accepts: 08012345678 / 2348012345678 / +2348012345678
+  // Returns: +234XXXXXXXXXX or throws a readable error string
+
+  function normalisePhone(raw: string): string {
+    const digits = raw.replace(/[\s\-\(\)]/g, "");
+    const normalised = digits.startsWith("+234")
+      ? digits
+      : digits.startsWith("234")
+      ? `+${digits}`
+      : digits.startsWith("0")
+      ? `+234${digits.slice(1)}`
+      : digits;
+
+    if (!/^\+234\d{10}$/.test(normalised)) {
+      throw new Error("Enter a valid Nigerian phone number (e.g. 08012345678).");
+    }
+    return normalised;
+  }
+
+  // ── Submit ───────────────────────────────────────────────────────
+
+  async function submit() {
     setError(null);
 
+    // ── Client-side validation ──────────────────────────────────
+    const { firstName, lastName, email, phone, password, passwordConfirm, role } = form;
+
     if (!firstName.trim() || !lastName.trim()) {
-      setError("Please enter your first and last name.");
+      setError("Please enter your full name.");
       return;
     }
     if (!email.trim()) {
@@ -85,99 +118,70 @@ export function useRegisterForm(): RegisterFormState & RegisterFormActions {
       return;
     }
     if (!phone.trim()) {
-  setError("Please enter your phone number.");
-  return;
-}
-const digits = phone.replace(/[\s\-\(\)]/g, "");
-const normalised = digits.startsWith("+234")
-  ? digits
-  : digits.startsWith("234")
-  ? `+${digits}`
-  : digits.startsWith("0")
-  ? `+234${digits.slice(1)}`
-  : digits;
-if (!/^\+234\d{10}$/.test(normalised)) {
-  setError("Please enter a valid Nigerian phone number (e.g. 08012345678).");
-  return;
-}
-setPhone(normalised);
-    if (!accountType) {
-      setError("Please select an account type.");
+      setError("Please enter your phone number.");
       return;
     }
     if (password.length < 8) {
       setError("Password must be at least 8 characters.");
       return;
     }
-    if (password !== confirmPassword) {
+    if (password !== passwordConfirm) {
       setError("Passwords do not match.");
       return;
     }
 
-    setStep(2);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleBack = () => {
-    setError(null);
-    setStep(1);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-
-    if (!nokName.trim()) {
-      setError("Please enter your next of kin's full name.");
-      return;
-    }
-    if (!nokRelationship) {
-      setError("Please select your relationship to next of kin.");
-      return;
-    }
-    if (!nokPhone.trim()) {
-      setError("Please enter your next of kin's phone number.");
-      return;
-    }
-    if (!nokAddress.trim()) {
-      setError("Please enter your next of kin's physical address.");
-      return;
-    }
-    if (!consent) {
-      setError("You must agree to the Terms of Service and Privacy Policy to continue.");
-      return;
-    }
-
-    setIsLoading(true);
+    let normalisedPhone: string;
     try {
-      // 🔌 Replace with your real registration call:
-      // await registerUser({
-      //   firstName, lastName, email, phone, password, accountType,
-      //   nextOfKin: { name: nokName, relationship: nokRelationship, phone: nokPhone, email: nokEmail, address: nokAddress }
-      // });
-      await new Promise((res) => setTimeout(res, 1500));
-      router.push(`/verify?email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}`);
-    } catch {
-      setError("Something went wrong. Please try again.");
-      setIsLoading(false);
+      normalisedPhone = normalisePhone(phone);
+    } catch (e: any) {
+      setError(e.message);
+      return;
     }
-  };
 
-  return {
-    step,
-    firstName, lastName, email, phone,
-    password, confirmPassword, accountType,
-    showPassword, showConfirmPassword,
-    isLoading, error,
-    nokName, nokRelationship, nokPhone, nokEmail, nokAddress,
-    consent,                           // ← added
-    setFirstName, setLastName, setEmail, setPhone,
-    setPassword, setConfirmPassword,
-    setAccountType: setAccountType as (v: AccountType) => void,
-    toggleShowPassword, toggleShowConfirmPassword,
-    handleNext, handleBack, handleSubmit,
-    setNokName, setNokRelationship, setNokPhone, setNokEmail, setNokAddress,
-    toggleConsent,                     // ← added
-  };
+    // ── API call ─────────────────────────────────────────────────
+    setLoading(true);
+    try {
+      const res = await fetch(`${BASE_URL}/users/auth/register/`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          first_name:       firstName.trim(),
+          last_name:        lastName.trim(),
+          email:            email.trim().toLowerCase(),
+          phone_number:     normalisedPhone,
+          password:         password,
+          password_confirm: passwordConfirm,
+          role:             ROLE_MAP[role],
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.status === 201) {
+        // ✅ Registration successful — backend sent OTP to email + SMS
+        // Store the login identifier so the verify screen knows who to verify
+        sessionStorage.setItem("ql_pending_login", email.trim().toLowerCase());
+        sessionStorage.setItem("ql_pending_role",  role);
+
+        router.push("/verify-otp");
+        return;
+      }
+
+      // ── Handle backend validation errors (400) ─────────────────
+      if (data?.errors) {
+        // Backend returns errors as { field: ["message", ...] }
+        const firstError = Object.values(data.errors as Record<string, string[]>)
+          .flat()[0];
+        setError(firstError ?? "Registration failed. Please check your details.");
+      } else {
+        setError(data?.message ?? "Registration failed. Please try again.");
+      }
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return { form, setField, loading, error, submit };
 }
