@@ -9,6 +9,7 @@ import {
   KYC_STEPS,
   LIVENESS_CHALLENGES,
 } from "@/constants/kycConstants";
+import { useKyc } from "@/hooks/useKyc";
 
 export interface KycFormState {
   step: KycStep;
@@ -92,6 +93,7 @@ export function useKycForm(): KycFormState & KycFormActions {
   // Global
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { submit: submitKyc } = useKyc();
 
   // ── Helpers ─────────────────────────────────────────────────────
   const goTo = (s: KycStep) => {
@@ -249,16 +251,27 @@ export function useKycForm(): KycFormState & KycFormActions {
     setIsLoading(true);
     setError(null);
     try {
-      // 🔌 Replace with your real KYC API call:
-      // await submitKyc({ idType, idNumber, docType, docFrontFile, docBackFile, facialCapture });
-      await new Promise((res) => setTimeout(res, 2500));
-      goTo("success");
+      const selfieFile = await dataUrlToFile(facialCapture!, "selfie.jpg");
+      const success = await submitKyc({
+        documentType:   (idType.toUpperCase() as "NIN" | "BVN"),
+        documentNumber: idNumber,
+        documentFront:  docFrontFile!,
+        documentBack:   docBackFile ?? undefined,
+        selfieImage:    selfieFile,
+      });
+      if (success) goTo("success");
+      else setError("Submission failed. Please check your details and try again.");
     } catch {
       setError("Submission failed. Please check your connection and try again.");
     } finally {
       setIsLoading(false);
     }
   };
+  async function dataUrlToFile(dataUrl: string, filename: string): Promise<File> {
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+    return new File([blob], filename, { type: "image/jpeg" });
+  }
 
   return {
     // State
@@ -296,4 +309,6 @@ export function useKycForm(): KycFormState & KycFormActions {
     videoRef,
     canvasRef,
   };
+
+   
 }

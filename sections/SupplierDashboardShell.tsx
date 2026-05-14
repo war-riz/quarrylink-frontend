@@ -37,7 +37,8 @@ import {
   SUPPLIER_ORDER_STATUS,
   SupplierOrder,
 } from "@/constants/supplierDashboardConstants";
-import { clearSession } from "@/constants/dummyUsers";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { logout } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { SupplierOrderActionsBar } from "./SupplierOrderActions";
 
@@ -130,7 +131,7 @@ function OrderActionModal({
 // ── Sidebar ───────────────────────────────────────────────────────
 
 function SupplierSidebar({ activeTab, setActiveTab }: { activeTab: SupplierTab; setActiveTab: (t: SupplierTab) => void }) {
-  const router = useRouter();
+  const { initials, displayName } = useCurrentUser();
   const nav = [
     { id: "overview" as SupplierTab, label: "Overview", icon: LayoutGrid },
     { id: "orders" as SupplierTab, label: "Orders", icon: Package, badge: MOCK_SUPPLIER_ORDERS.filter(o => o.status === "new").length },
@@ -184,16 +185,16 @@ function SupplierSidebar({ activeTab, setActiveTab }: { activeTab: SupplierTab; 
       <div className="p-4 border-t border-white/10">
         <div className="flex items-center gap-3 px-2 py-2">
           <div className="w-9 h-9 rounded-full bg-[#ffc107]/20 border-2 border-[#ffc107]/40 flex items-center justify-center shrink-0">
-            <span className="font-bold text-[13px] text-[#ffc107]">CO</span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-bold text-[13px] text-white truncate">Chukwuemeka Obi</p>
-            <p className="text-[11px] text-white/40">Supplier</p>
-          </div>
-          <button onClick={() => { clearSession(); router.push("/dev-login"); }}
-            className="text-white/30 hover:text-white/70 transition-colors">
-            <LogOut className="w-4 h-4" />
-          </button>
+  <span className="font-bold text-[13px] text-[#ffc107]">{initials}</span>
+</div>
+<div className="flex-1 min-w-0">
+  <p className="font-bold text-[13px] text-white truncate">{displayName}</p>
+  <p className="text-[11px] text-white/40">Supplier</p>
+</div>
+          <button onClick={() => logout()}
+  className="text-white/30 hover:text-white/70 transition-colors">
+  <LogOut className="w-4 h-4" />
+</button>
         </div>
       </div>
     </aside>

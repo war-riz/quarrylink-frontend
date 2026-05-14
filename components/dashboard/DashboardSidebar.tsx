@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import {
   LayoutGrid,
   Search,
@@ -18,7 +17,8 @@ import {
 import { cn } from "@/lib/utils";
 import { DASHBOARD_NAV, DashboardTab } from "@/constants/dashboardConstants";
 import { siteConfig } from "@/constants/navigation";
-import { clearSession } from "@/constants/dummyUsers";
+ import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { logout } from "@/lib/api";
 
 const iconMap: Record<string, React.ElementType> = {
   grid: LayoutGrid,
@@ -37,18 +37,15 @@ interface DashboardSidebarProps {
 }
 
 export function DashboardSidebar({
+  
   activeTab,
   setActiveTab,
   isMobileOpen,
   onClose,
 }: DashboardSidebarProps) {
-  const router = useRouter();
+  
 
-  const handleSignOut = () => {
-    clearSession();
-    router.push("/login");
-  };
-
+  const { initials, displayName } = useCurrentUser();
   return (
     <>
       {/* Mobile overlay */}
@@ -142,21 +139,21 @@ export function DashboardSidebar({
         <div className="p-4 border-t border-white/10">
           <div className="flex items-center gap-3 px-2 py-2">
             <div className="w-9 h-9 rounded-full bg-[#ffc107]/20 border-2 border-[#ffc107]/40 flex items-center justify-center shrink-0">
-              <span className="font-bold text-[13px] text-[#ffc107]">AO</span>
+              <span className="font-bold text-[13px] text-[#ffc107]">{initials}</span>
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-bold text-[13px] text-white truncate">
-                Adebayo Okonkwo
-              </p>
-              <p className="text-[11px] text-white/40 truncate">Customer</p>
+  {displayName}
+</p>
+<p className="text-[11px] text-white/40 truncate">Customer</p>
             </div>
-            <button
-              onClick={handleSignOut}
-              title="Sign out"
-              className="text-white/30 hover:text-white/70 transition-colors"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
+           <button
+  onClick={() => logout()}
+  title="Sign out"
+  className="text-white/30 hover:text-white/70 transition-colors"
+>
+  <LogOut className="w-4 h-4" />
+</button>
           </div>
         </div>
       </aside>

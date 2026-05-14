@@ -36,7 +36,8 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { clearSession } from "@/constants/dummyUsers";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { logout } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { NavigateButton, ProofOfDelivery } from "./DriverDeliveryExtras";
 
@@ -525,7 +526,7 @@ function DriverEarnings() {
 // ── Sidebar ───────────────────────────────────────────────────────
 
 function DriverSidebar({ activeTab, setActiveTab }: { activeTab: DriverTab; setActiveTab: (t: DriverTab) => void }) {
-  const router = useRouter();
+  const { initials, displayName } = useCurrentUser();
   const nav = [
     { id: "overview" as DriverTab, label: "Overview", icon: LayoutGrid },
     { id: "active" as DriverTab, label: "Active Delivery", icon: Truck, badge: 1 },
@@ -578,16 +579,16 @@ function DriverSidebar({ activeTab, setActiveTab }: { activeTab: DriverTab; setA
       <div className="p-4 border-t border-white/10">
         <div className="flex items-center gap-3 px-2 py-2">
           <div className="w-9 h-9 rounded-full bg-[#ffc107]/20 border-2 border-[#ffc107]/40 flex items-center justify-center shrink-0">
-            <span className="font-bold text-[13px] text-[#ffc107]">EO</span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-bold text-[13px] text-white truncate">Emeka Okafor</p>
-            <p className="text-[11px] text-white/40">Driver · ⭐ {DRIVER_STATS.rating}</p>
-          </div>
-          <button onClick={() => { clearSession(); router.push("/dev-login"); }}
-            className="text-white/30 hover:text-white/70 transition-colors">
-            <LogOut className="w-4 h-4" />
-          </button>
+  <span className="font-bold text-[13px] text-[#ffc107]">{initials}</span>
+</div>
+<div className="flex-1 min-w-0">
+  <p className="font-bold text-[13px] text-white truncate">{displayName}</p>
+  <p className="text-[11px] text-white/40">Driver · ⭐ {DRIVER_STATS.rating}</p>
+</div>
+          <button onClick={() => logout()}
+  className="text-white/30 hover:text-white/70 transition-colors">
+  <LogOut className="w-4 h-4" />
+</button>
         </div>
       </div>
     </aside>

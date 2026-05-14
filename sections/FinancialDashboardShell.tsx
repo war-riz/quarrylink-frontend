@@ -34,8 +34,8 @@ import {
   Building2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { clearSession } from "@/constants/dummyUsers";
-import { useRouter } from "next/navigation";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { logout } from "@/lib/api";
 
 type FinancialTab = "overview" | "escrow" | "financing" | "analytics";
 
@@ -195,7 +195,7 @@ function FinancialSidebar({
   activeTab: FinancialTab;
   setActiveTab: (t: FinancialTab) => void;
 }) {
-  const router = useRouter();
+  const { initials, displayName } = useCurrentUser();
   const nav = [
     { id: "overview"   as FinancialTab, label: "Overview",     icon: LayoutGrid },
     { id: "escrow"     as FinancialTab, label: "Escrow Flow",  icon: ShieldCheck },
@@ -267,18 +267,18 @@ function FinancialSidebar({
       <div className="p-4 border-t border-white/10">
         <div className="flex items-center gap-3 px-2 py-2">
           <div className="w-9 h-9 rounded-full bg-[#ffc107]/20 border-2 border-[#ffc107]/40 flex items-center justify-center shrink-0">
-            <span className="font-bold text-[13px] text-[#ffc107]">NA</span>
+            <span className="font-bold text-[13px] text-[#ffc107]">{initials}</span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-bold text-[13px] text-white truncate">Ngozi Adeyemi</p>
-            <p className="text-[11px] text-white/40">Financial Analyst</p>
+            <p className="font-bold text-[13px] text-white truncate">{displayName}</p>
+<p className="text-[11px] text-white/40">Financial Analyst</p>
           </div>
           <button
-            onClick={() => { clearSession(); router.push("/dev-login"); }}
-            className="text-white/30 hover:text-white/70 transition-colors"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
+  onClick={() => logout()}
+  className="text-white/30 hover:text-white/70 transition-colors"
+>
+  <LogOut className="w-4 h-4" />
+</button>
         </div>
       </div>
     </aside>

@@ -3,6 +3,8 @@
 import { Menu } from "lucide-react";
 import { DashboardTab } from "@/constants/dashboardConstants";
 import { NotificationCenter } from "@/components/dashboard/NotificationSystem";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const TAB_TITLES: Record<DashboardTab, string> = {
   overview: "Dashboard",
@@ -13,12 +15,16 @@ const TAB_TITLES: Record<DashboardTab, string> = {
   profile: "Profile",
 };
 
+
+
 interface DashboardTopbarProps {
   activeTab: DashboardTab;
   onMenuClick: () => void;
 }
 
 export function DashboardTopbar({ activeTab, onMenuClick }: DashboardTopbarProps) {
+  const { initials } = useCurrentUser();
+const { unreadCount } = useNotifications();
   return (
     <header className="h-16 bg-white border-b border-zinc-100 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30">
       <div className="flex items-center gap-4">
@@ -49,8 +55,8 @@ export function DashboardTopbar({ activeTab, onMenuClick }: DashboardTopbarProps
 
         {/* Avatar */}
         <div className="w-9 h-9 rounded-full bg-[#ffc107]/20 border-2 border-[#ffc107]/40 flex items-center justify-center">
-          <span className="font-bold text-[12px] text-[#ffc107]">AO</span>
-        </div>
+  <span className="font-bold text-[12px] text-[#ffc107]">{initials}</span>
+</div>
       </div>
     </header>
   );
