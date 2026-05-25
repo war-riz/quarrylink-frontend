@@ -8,10 +8,12 @@
  *   const res = await api("/users/me/");
  *   const data = await res.json();
  *
- * Replace every raw fetch() in the codebase with api().
- * It silently refreshes the access token on 401 and retries once.
- * On second 401 (refresh also expired) it clears tokens and
- * redirects to /dev-login.
+ * Key behaviours:
+ *   - Automatically attaches Bearer token from localStorage
+ *   - On 401: silently refreshes the access token and retries once
+ *   - On second 401: clears tokens and redirects to /dev-login
+ *   - When body is FormData: does NOT set Content-Type so the browser
+ *     can set the correct multipart boundary automatically
  * ─────────────────────────────────────────────────────────────────
  */
 
@@ -71,29 +73,56 @@ async function refreshAccessToken(): Promise<string | null> {
   }
 }
 
+// ── Build headers ─────────────────────────────────────────────────
+// When the body is FormData we must NOT set Content-Type — the browser
+// sets it automatically with the correct multipart boundary.
+
+function buildHeaders(
+  body: RequestInit["body"],
+  overrides: Record<string, string>,
+  token: string | null,
+): Record<string, string> {
+  const headers: Record<string, string> = {};
+
+  // Only set JSON content type when not sending FormData
+  if (!(body instanceof FormData)) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  // Merge caller overrides (but never let them force Content-Type on FormData)
+  for (const [k, v] of Object.entries(overrides)) {
+    if (body instanceof FormData && k.toLowerCase() === "content-type") continue;
+    headers[k] = v;
+  }
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  return headers;
+}
+
 // ── Main fetch wrapper ────────────────────────────────────────────
 
 /**
  * api(path, options?)
  *
  * `path` can be:
- *   - relative:  "/users/me/"  → prepended with BASE_URL
+ *   - relative:  "/users/me/"   → prepended with BASE_URL
  *   - absolute:  "https://..."  → used as-is
  */
 export async function api(
   path: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<Response> {
   const url = path.startsWith("http") ? path : `${BASE_URL}${path}`;
 
-  const token = getAccessToken();
-
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...(options.headers as Record<string, string> ?? {}),
-  };
-
-  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const token   = getAccessToken();
+  const headers = buildHeaders(
+    options.body ?? null,
+    (options.headers as Record<string, string>) ?? {},
+    token,
+  );
 
   let res = await fetch(url, { ...options, headers });
 
@@ -102,10 +131,14 @@ export async function api(
     const newToken = await refreshAccessToken();
 
     if (newToken) {
-      headers["Authorization"] = `Bearer ${newToken}`;
-      res = await fetch(url, { ...options, headers });
+      const retryHeaders = buildHeaders(
+        options.body ?? null,
+        (options.headers as Record<string, string>) ?? {},
+        newToken,
+      );
+      res = await fetch(url, { ...options, headers: retryHeaders });
     } else {
-      // Refresh expired — log the user out
+      // Refresh token also expired — log the user out
       clearTokens();
       if (typeof window !== "undefined") {
         window.location.href = "/dev-login";
@@ -117,7 +150,6 @@ export async function api(
 }
 
 // ── Logout helper ─────────────────────────────────────────────────
-// Call this wherever you currently call clearSession()
 
 export async function logout(): Promise<void> {
   const refresh = getRefreshToken();
@@ -125,7 +157,6 @@ export async function logout(): Promise<void> {
 
   if (refresh && access) {
     try {
-      // Blacklist the refresh token on the backend
       await fetch(`${BASE_URL}/users/auth/logout/`, {
         method:  "POST",
         headers: {

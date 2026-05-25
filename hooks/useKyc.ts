@@ -7,17 +7,9 @@
  *   POST /api/users/kyc/submit/    → submit KYC documents
  *   GET  /api/users/kyc/status/    → check review status
  *
- * IMPORTANT — Cloudinary flow:
- *   The backend stores Cloudinary URLs, not raw file blobs.
- *   So the flow is:
- *     1. User picks file in the UI (FileReader preview already works)
- *     2. On submit, upload file to Cloudinary → get back a URL
- *     3. Send that URL to /api/users/kyc/submit/
- *
- *   Until you add the real Cloudinary SDK, this hook sends the
- *   file as a multipart/form-data upload which Django will handle
- *   via its ImageField (Cloudinary storage is configured in settings).
- *   Switch to direct Cloudinary upload later for better performance.
+ * The multipart upload works because lib/api.ts now detects FormData
+ * and skips setting Content-Type, letting the browser set the correct
+ * multipart boundary automatically.
  *
  * Backend request shape (multipart):
  *   document_type   — "NIN" | "VOTERS_CARD" | "DRIVERS_LICENSE" | "PASSPORT" | "BVN"
@@ -72,11 +64,11 @@ export interface KycSubmitPayload {
 // ── Hook ───────────────────────────────────────────────────────────
 
 export function useKyc() {
-  const [status,      setStatus]      = useState<KycStatus | null>(null);
-  const [statusLoad,  setStatusLoad]  = useState(true);
-  const [submitLoad,  setSubmitLoad]  = useState(false);
-  const [error,       setError]       = useState<string | null>(null);
-  const [submitted,   setSubmitted]   = useState(false);
+  const [status,     setStatus]     = useState<KycStatus | null>(null);
+  const [statusLoad, setStatusLoad] = useState(true);
+  const [submitLoad, setSubmitLoad] = useState(false);
+  const [error,      setError]      = useState<string | null>(null);
+  const [submitted,  setSubmitted]  = useState(false);
 
   // ── Fetch current KYC status on mount ─────────────────────────
 
@@ -105,13 +97,13 @@ export function useKyc() {
 
   // ── Submit KYC ────────────────────────────────────────────────
 
-  async function submit(payload: KycSubmitPayload) {
+  async function submit(payload: KycSubmitPayload): Promise<boolean> {
     setError(null);
     setSubmitLoad(true);
 
     try {
-      // Build multipart form — Django's ImageField handles the upload
-      // to Cloudinary via the configured DEFAULT_FILE_STORAGE backend.
+      // Build multipart form — lib/api.ts skips Content-Type for FormData
+      // so the browser sets the correct multipart boundary automatically.
       const form = new FormData();
       form.append("document_type",   payload.documentType);
       form.append("document_number", payload.documentNumber);
@@ -121,12 +113,10 @@ export function useKyc() {
         form.append("document_back", payload.documentBack);
       }
 
-      // Note: do NOT set Content-Type manually — the browser sets
-      // multipart/form-data with the correct boundary automatically.
-      const res = await api("/users/kyc/submit/", {
-        method:  "POST",
-        headers: {},   // override the default "application/json"
-        body:    form,
+      const res  = await api("/users/kyc/submit/", {
+        method: "POST",
+        body:   form,
+        // Do NOT set headers here — api() handles it correctly for FormData
       });
 
       const data = await res.json();
@@ -139,10 +129,11 @@ export function useKyc() {
 
       if (res.status === 400 && data?.message === "KYC already submitted") {
         setError("You have already submitted KYC documents.");
-        await fetchStatus(); // refresh to show current status
+        await fetchStatus();
         return false;
       }
 
+      // Surface first field error if present
       if (data?.errors) {
         const first = Object.values(data.errors as Record<string, string[]>)
           .flat()[0];
@@ -160,7 +151,7 @@ export function useKyc() {
   }
 
   return {
-    /** Current KYC status from backend, null = not submitted */
+    /** Current KYC status from backend, null = not yet submitted */
     status,
     statusLoad,
     submitLoad,

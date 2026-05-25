@@ -4,7 +4,7 @@
  * useNotifications
  * ─────────────────────────────────────────────────────────────────
  * Wired to:
- *   GET    /api/notifications/                  list (filterable)
+ *   GET    /api/notifications/                  list
  *   GET    /api/notifications/unread-count/     badge count
  *   POST   /api/notifications/{id}/read/        mark one read
  *   POST   /api/notifications/mark-all-read/    mark all read
@@ -18,32 +18,28 @@
  *   action_url, data, created_at, time_ago
  * }
  *
- * Usage in any dashboard shell:
- *
- *   const {
- *     notifications, unreadCount, loading,
- *     markRead, markAllRead, remove, clearAll
- *   } = useNotifications();
+ * Polling pauses when the browser tab is hidden to avoid
+ * unnecessary requests.
  * ─────────────────────────────────────────────────────────────────
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { api } from "@/lib/api";
 
 // ── Types ──────────────────────────────────────────────────────────
 
 export interface Notification {
-  id:                         string;
-  title:                      string;
-  message:                    string;
-  notification_type:          string;
-  notification_type_display:  string;
-  is_read:                    boolean;
-  read_at:                    string | null;
-  action_url:                 string | null;
-  data:                       Record<string, unknown> | null;
-  created_at:                 string;
-  time_ago:                   string;
+  id:                        string;
+  title:                     string;
+  message:                   string;
+  notification_type:         string;
+  notification_type_display: string;
+  is_read:                   boolean;
+  read_at:                   string | null;
+  action_url:                string | null;
+  data:                      Record<string, unknown> | null;
+  created_at:                string;
+  time_ago:                  string;
 }
 
 export interface UseNotificationsResult {
@@ -55,13 +51,12 @@ export interface UseNotificationsResult {
   markAllRead:   () => Promise<void>;
   remove:        (id: string) => Promise<void>;
   clearAll:      () => Promise<void>;
-  /** Re-fetch from backend */
   refresh:       () => void;
-  /** Filter to unread only */
   filterUnread:  () => void;
-  /** Remove filter — show all */
   filterAll:     () => void;
 }
+
+const POLL_INTERVAL_MS = 60_000; // 60 s
 
 // ── Hook ───────────────────────────────────────────────────────────
 
@@ -73,10 +68,13 @@ export function useNotifications(): UseNotificationsResult {
   const [unreadOnly,    setUnreadOnly]    = useState(false);
   const [tick,          setTick]          = useState(0);
 
+  // Track in-flight optimistic removals so reverts work correctly
+  const prevNotifications = useRef<Notification[]>([]);
+  const prevUnreadCount   = useRef(0);
+
   // ── Fetch list + badge count ────────────────────────────────────
 
   const fetchAll = useCallback(async () => {
-    setLoading(true);
     setError(null);
 
     try {
@@ -91,91 +89,132 @@ export function useNotifications(): UseNotificationsResult {
       const countData = await countRes.json();
 
       if (listRes.ok) {
-        // Paginated response: { results: [...] } or { data: [...] }
+        // Handle both paginated { results: [] } and flat { data: [] } shapes
         const items: Notification[] =
-          listData?.results ?? listData?.data ?? [];
+          listData?.results ??
+          listData?.data    ??
+          (Array.isArray(listData) ? listData : []);
+
         setNotifications(items);
       } else {
         setError(listData?.message ?? "Failed to load notifications.");
       }
 
       if (countRes.ok) {
-        setUnreadCount(countData?.data?.unread_count ?? 0);
+        setUnreadCount(
+          countData?.data?.unread_count ??
+          countData?.unread_count       ??
+          0
+        );
       }
     } catch {
       setError("Network error loading notifications.");
     } finally {
       setLoading(false);
     }
-  }, [unreadOnly, tick]);
+  }, [unreadOnly, tick]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => { fetchAll(); }, [fetchAll]);
-
-  // ── Poll for new notifications every 60 s ─────────────────────
-  // Replace this with a WebSocket once your backend exposes one.
   useEffect(() => {
-    const interval = setInterval(() => setTick(t => t + 1), 60_000);
-    return () => clearInterval(interval);
+    setLoading(true);
+    fetchAll();
+  }, [fetchAll]);
+
+  // ── Poll — pauses when tab is hidden ──────────────────────────────
+
+  useEffect(() => {
+    const tick = () => {
+      if (document.visibilityState === "visible") {
+        setTick(t => t + 1);
+      }
+    };
+
+    const interval = setInterval(tick, POLL_INTERVAL_MS);
+    document.addEventListener("visibilitychange", tick);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", tick);
+    };
   }, []);
 
-  // ── Mark one read ─────────────────────────────────────────────
+  // ── Mark one read ─────────────────────────────────────────────────
 
-  async function markRead(id: string) {
+  const markRead = useCallback(async (id: string) => {
     // Optimistic update
+    prevNotifications.current = notifications;
+    prevUnreadCount.current   = unreadCount;
+
     setNotifications(prev =>
       prev.map(n => n.id === id ? { ...n, is_read: true } : n)
     );
     setUnreadCount(c => Math.max(0, c - 1));
 
     try {
-      await api(`/notifications/${id}/read/`, { method: "POST" });
+      const res = await api(`/notifications/${id}/read/`, { method: "POST" });
+      if (!res.ok) throw new Error("Failed");
     } catch {
-      // Revert on error
-      setTick(t => t + 1);
+      // Revert on failure
+      setNotifications(prevNotifications.current);
+      setUnreadCount(prevUnreadCount.current);
     }
-  }
+  }, [notifications, unreadCount]);
 
-  // ── Mark all read ─────────────────────────────────────────────
+  // ── Mark all read ─────────────────────────────────────────────────
 
-  async function markAllRead() {
+  const markAllRead = useCallback(async () => {
+    prevNotifications.current = notifications;
+    prevUnreadCount.current   = unreadCount;
+
     setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
     setUnreadCount(0);
 
     try {
-      await api("/notifications/mark-all-read/", { method: "POST" });
+      const res = await api("/notifications/mark-all-read/", { method: "POST" });
+      if (!res.ok) throw new Error("Failed");
     } catch {
-      setTick(t => t + 1);
+      setNotifications(prevNotifications.current);
+      setUnreadCount(prevUnreadCount.current);
     }
-  }
+  }, [notifications, unreadCount]);
 
-  // ── Delete one ────────────────────────────────────────────────
+  // ── Delete one ────────────────────────────────────────────────────
 
-  async function remove(id: string) {
+  const remove = useCallback(async (id: string) => {
     const removed = notifications.find(n => n.id === id);
+    prevNotifications.current = notifications;
+    prevUnreadCount.current   = unreadCount;
+
     setNotifications(prev => prev.filter(n => n.id !== id));
     if (removed && !removed.is_read) {
       setUnreadCount(c => Math.max(0, c - 1));
     }
 
     try {
-      await api(`/notifications/${id}/`, { method: "DELETE" });
+      const res = await api(`/notifications/${id}/`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed");
     } catch {
-      setTick(t => t + 1);
+      setNotifications(prevNotifications.current);
+      setUnreadCount(prevUnreadCount.current);
     }
-  }
+  }, [notifications, unreadCount]);
 
-  // ── Clear all ─────────────────────────────────────────────────
+  // ── Clear all ─────────────────────────────────────────────────────
 
-  async function clearAll() {
+  const clearAll = useCallback(async () => {
+    prevNotifications.current = notifications;
+    prevUnreadCount.current   = unreadCount;
+
     setNotifications([]);
     setUnreadCount(0);
 
     try {
-      await api("/notifications/clear-all/", { method: "DELETE" });
+      const res = await api("/notifications/clear-all/", { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed");
     } catch {
-      setTick(t => t + 1);
+      setNotifications(prevNotifications.current);
+      setUnreadCount(prevUnreadCount.current);
     }
-  }
+  }, [notifications, unreadCount]);
 
   return {
     notifications,
@@ -186,7 +225,7 @@ export function useNotifications(): UseNotificationsResult {
     markAllRead,
     remove,
     clearAll,
-    refresh:     () => setTick(t => t + 1),
+    refresh:      () => setTick(t => t + 1),
     filterUnread: () => setUnreadOnly(true),
     filterAll:    () => setUnreadOnly(false),
   };

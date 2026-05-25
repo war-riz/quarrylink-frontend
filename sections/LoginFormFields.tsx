@@ -1,16 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Eye, EyeOff, Phone, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LOGIN_COPY } from "@/constants/loginConstants";
 
 interface LoginFormFieldsProps {
-  email: string;
+  // Renamed from `email` to `login` — accepts email OR phone
+  login: string;
   password: string;
   remember: boolean;
   showPassword: boolean;
-  onEmailChange: (v: string) => void;
+  onLoginChange: (v: string) => void;
   onPasswordChange: (v: string) => void;
   onToggleRemember: () => void;
   onToggleShowPassword: () => void;
@@ -20,11 +21,11 @@ const inputBase =
   "w-full h-12 rounded-xl border-2 border-zinc-200 bg-zinc-50 pl-11 pr-4 text-[14px] font-normal text-[#121212] placeholder:text-zinc-400 outline-none transition-all duration-200 focus:border-[#ffc107] focus:bg-white focus:shadow-[0_0_0_4px_rgba(255,193,7,0.12)]";
 
 export function LoginFormFields({
-  email,
+  login,
   password,
   remember,
   showPassword,
-  onEmailChange,
+  onLoginChange,
   onPasswordChange,
   onToggleRemember,
   onToggleShowPassword,
@@ -32,20 +33,22 @@ export function LoginFormFields({
   return (
     <div className="flex flex-col gap-4">
 
-      {/* Email */}
+      {/* Email or Phone */}
       <div className="flex flex-col gap-2">
-        <label htmlFor="email" className="text-[13px] font-bold text-[#121212]">
-          Email address
+        <label htmlFor="login" className="text-[13px] font-bold text-[#121212]">
+          Email or phone number
         </label>
         <div className="relative">
-          <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
+          <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
           <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => onEmailChange(e.target.value)}
-            placeholder="you@company.com"
-            autoComplete="email"
+            id="login"
+            // type="text" so Nigerian phone numbers (08012...) aren't rejected
+            type="text"
+            inputMode="email"
+            value={login}
+            onChange={(e) => onLoginChange(e.target.value)}
+            placeholder="you@company.com or 08012345678"
+            autoComplete="username"
             required
             className={inputBase}
           />

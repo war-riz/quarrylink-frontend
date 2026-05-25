@@ -13,8 +13,18 @@ import { LoginErrorBanner } from "@/components/ui/LoginErrorBanner";
 
 export function LoginFormPanel() {
   const {
-    email, password, remember, showPassword, isLoading, error,
-    setEmail, setPassword, toggleRemember, toggleShowPassword, handleSubmit,
+    login,
+    setLogin,
+    password,
+    setPassword,
+    remember,
+    showPassword,
+    loading,
+    error,
+    clearError,
+    toggleRemember,
+    toggleShowPassword,
+    handleSubmit,
   } = useLoginForm();
 
   return (
@@ -63,16 +73,16 @@ export function LoginFormPanel() {
           {/* Main form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-5 mt-1">
             <LoginFormFields
-              email={email}
+              login={login}
               password={password}
               remember={remember}
               showPassword={showPassword}
-              onEmailChange={setEmail}
-              onPasswordChange={setPassword}
+              onLoginChange={(v) => { setLogin(v); clearError(); }}
+              onPasswordChange={(v) => { setPassword(v); clearError(); }}
               onToggleRemember={toggleRemember}
               onToggleShowPassword={toggleShowPassword}
             />
-            <LoginSubmitButton isLoading={isLoading} />
+            <LoginSubmitButton isLoading={loading} />
           </form>
 
           {/* Terms */}
