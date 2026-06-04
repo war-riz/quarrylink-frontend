@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import {
   Package,
-  TrendingUp,
   Wallet,
   Clock,
   ArrowRight,
@@ -11,16 +10,14 @@ import {
   ChevronRight,
   Truck,
   CheckCircle2,
-  AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
-  MOCK_STATS,
-  MOCK_ORDERS,
   ORDER_STATUS_CONFIG,
   Order,
   DashboardTab,
 } from "@/constants/dashboardConstants";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 function formatNaira(amount: number) {
   return new Intl.NumberFormat("en-NG", {
@@ -41,12 +38,28 @@ function formatDate(iso: string) {
 interface OverviewTabProps {
   setActiveTab: (tab: DashboardTab) => void;
   setSelectedOrder: (order: Order) => void;
+  // real data passed down from useDashboard
+  stats: {
+    totalOrders: number;
+    activeOrders: number;
+    totalSpent: number;
+    savedAmount: number;
+    pendingDeliveries: number;
+    completedOrders: number;
+  };
+  orders: Order[];
+  activeOrder: Order | null;
 }
 
-export function OverviewTab({ setActiveTab, setSelectedOrder }: OverviewTabProps) {
-  const stats = MOCK_STATS;
-  const activeOrder = MOCK_ORDERS.find((o) => o.status === "in_transit");
-  const recentOrders = MOCK_ORDERS.slice(0, 4);
+export function OverviewTab({
+  setActiveTab,
+  setSelectedOrder,
+  stats,
+  orders,
+  activeOrder,
+}: OverviewTabProps) {
+  const { displayName } = useCurrentUser();
+  const recentOrders = orders.slice(0, 4);
 
   const statCards = [
     {
@@ -98,10 +111,10 @@ export function OverviewTab({ setActiveTab, setSelectedOrder }: OverviewTabProps
             Welcome back 👋
           </p>
           <h2 className="font-extrabold text-[22px] text-white leading-tight">
-            Adebayo Okonkwo
+            {displayName || "—"}
           </h2>
           <p className="text-[13px] text-white/50 mt-0.5">
-            Skyline Construction Ltd • Verified Customer
+            Verified Customer
           </p>
         </div>
         <button
@@ -181,17 +194,19 @@ export function OverviewTab({ setActiveTab, setSelectedOrder }: OverviewTabProps
                   {activeOrder.quantity} tons · {activeOrder.supplier}
                 </p>
               </div>
-              <div className="flex items-center gap-2 bg-orange-50 border border-orange-200 rounded-xl px-4 py-2">
-                <Truck className="w-4 h-4 text-orange-500" />
-                <div>
-                  <p className="font-bold text-[13px] text-orange-700">
-                    {activeOrder.driver?.name}
-                  </p>
-                  <p className="text-[11px] text-orange-500">
-                    ETA: {activeOrder.eta} · {activeOrder.driver?.truckPlate}
-                  </p>
+              {activeOrder.driver && (
+                <div className="flex items-center gap-2 bg-orange-50 border border-orange-200 rounded-xl px-4 py-2">
+                  <Truck className="w-4 h-4 text-orange-500" />
+                  <div>
+                    <p className="font-bold text-[13px] text-orange-700">
+                      {activeOrder.driver.name}
+                    </p>
+                    <p className="text-[11px] text-orange-500">
+                      {activeOrder.eta ? `ETA: ${activeOrder.eta} · ` : ""}{activeOrder.driver.truckPlate}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Progress steps */}
@@ -199,7 +214,7 @@ export function OverviewTab({ setActiveTab, setSelectedOrder }: OverviewTabProps
               {["Placed", "Accepted", "In Preparation", "In Transit", "Delivered"].map(
                 (step, i) => {
                   const stepNum = i + 1;
-                  const currentStep = 4; // in_transit
+                  const currentStep = ORDER_STATUS_CONFIG[activeOrder.status]?.step ?? 1;
                   const isDone = stepNum < currentStep;
                   const isActive = stepNum === currentStep;
                   return (
@@ -247,7 +262,7 @@ export function OverviewTab({ setActiveTab, setSelectedOrder }: OverviewTabProps
         </motion.div>
       )}
 
-      {/* Recent orders table */}
+      {/* Recent orders */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -264,47 +279,57 @@ export function OverviewTab({ setActiveTab, setSelectedOrder }: OverviewTabProps
           </button>
         </div>
 
-        <div className="divide-y divide-zinc-50">
-          {recentOrders.map((order) => {
-            const statusCfg = ORDER_STATUS_CONFIG[order.status];
-            return (
-              <button
-                key={order.id}
-                onClick={() => {
-                  setSelectedOrder(order);
-                  setActiveTab("orders");
-                }}
-                className="w-full flex items-center gap-4 px-6 py-4 hover:bg-zinc-50/80 transition-colors text-left"
-              >
-                <div className="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center shrink-0">
-                  <Package className="w-5 h-5 text-zinc-400" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-[13px] text-[#121212] truncate">
-                    {order.material}
-                  </p>
-                  <p className="text-[12px] text-zinc-400">
-                    {order.id} · {formatDate(order.createdAt)}
-                  </p>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="font-bold text-[13px] text-[#121212]">
-                    {formatNaira(order.total)}
-                  </p>
-                  <span
-                    className="inline-block mt-1 text-[11px] font-bold px-2 py-0.5 rounded-full"
-                    style={{
-                      color: statusCfg.color,
-                      background: statusCfg.bg,
-                    }}
-                  >
-                    {statusCfg.label}
-                  </span>
-                </div>
-              </button>
-            );
-          })}
-        </div>
+        {recentOrders.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-10 text-center">
+            <Package className="w-10 h-10 text-zinc-200 mb-3" />
+            <p className="text-[13px] text-zinc-400 font-medium">No orders yet</p>
+            <button
+              onClick={() => setActiveTab("browse")}
+              className="mt-3 text-[13px] font-bold text-[#ffc107] hover:underline"
+            >
+              Browse materials →
+            </button>
+          </div>
+        ) : (
+          <div className="divide-y divide-zinc-50">
+            {recentOrders.map((order) => {
+              const statusCfg = ORDER_STATUS_CONFIG[order.status];
+              return (
+                <button
+                  key={order.id}
+                  onClick={() => {
+                    setSelectedOrder(order);
+                    setActiveTab("orders");
+                  }}
+                  className="w-full flex items-center gap-4 px-6 py-4 hover:bg-zinc-50/80 transition-colors text-left"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center shrink-0">
+                    <Package className="w-5 h-5 text-zinc-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-[13px] text-[#121212] truncate">
+                      {order.material}
+                    </p>
+                    <p className="text-[12px] text-zinc-400">
+                      {order.id} · {formatDate(order.createdAt)}
+                    </p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="font-bold text-[13px] text-[#121212]">
+                      {formatNaira(order.total)}
+                    </p>
+                    <span
+                      className="inline-block mt-1 text-[11px] font-bold px-2 py-0.5 rounded-full"
+                      style={{ color: statusCfg.color, background: statusCfg.bg }}
+                    >
+                      {statusCfg.label}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </motion.div>
     </div>
   );

@@ -47,6 +47,9 @@ export function DashboardShell() {
                   <OverviewTab
                     setActiveTab={dash.setActiveTab}
                     setSelectedOrder={dash.setSelectedOrder}
+                    stats={dash.stats}
+                    orders={dash.orders}
+                    activeOrder={dash.activeOrder}
                   />
                 )}
                 {dash.activeTab === "browse" && (
@@ -74,8 +77,8 @@ export function DashboardShell() {
                 {dash.activeTab === "tracking" && (
                   <TrackingTab activeOrder={dash.activeOrder} />
                 )}
-                {dash.activeTab === "payments" && <PaymentsTab />}
-                {dash.activeTab === "profile" && <ProfileTab />}
+                {dash.activeTab === "payments" && <PaymentsTab orders={dash.orders} />}
+                {dash.activeTab === "profile" && <ProfileTab stats={dash.stats} />}
               </motion.div>
             </AnimatePresence>
           </main>

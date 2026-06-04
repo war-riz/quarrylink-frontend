@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import {
-  User,
   Building2,
   Mail,
   Phone,
@@ -12,11 +11,9 @@ import {
   Lock,
   ChevronRight,
   Edit3,
-  Badge,
   Star,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { MOCK_STATS } from "@/constants/dashboardConstants";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 function formatNaira(amount: number) {
   return new Intl.NumberFormat("en-NG", {
@@ -26,23 +23,37 @@ function formatNaira(amount: number) {
   }).format(amount);
 }
 
-const PROFILE = {
-  name: "Adebayo Okonkwo",
-  company: "Skyline Construction Ltd",
-  email: "adebayo@skylineconstruction.ng",
-  phone: "+234 802 345 6789",
-  address: "24 Adeola Odeku Street, Victoria Island, Lagos",
-  role: "Customer",
-  kycStatus: "verified",
-  memberSince: "January 2024",
-};
+interface ProfileTabProps {
+  stats: {
+    totalOrders: number;
+    totalSpent: number;
+    completedOrders: number;
+  };
+}
 
-export function ProfileTab() {
+export function ProfileTab({ stats }: ProfileTabProps) {
+  const { user, profile, initials, displayName } = useCurrentUser();
+
+  const companyName  = (profile as any)?.company_name  || "";
+  const city         = (profile as any)?.city          || "";
+  const state        = (profile as any)?.state         || "";
+  const address      = city ? `${city}${state ? `, ${state}` : ""}` : "";
+  const memberSince  = user?.created_at
+    ? new Date(user.created_at).toLocaleDateString("en-NG", { month: "long", year: "numeric" })
+    : "—";
+
   const settings = [
-    { label: "Notification Preferences", sub: "Email, SMS, push alerts", icon: Bell, color: "#3b82f6" },
-    { label: "Change Password", sub: "Update your login credentials", icon: Lock, color: "#8b5cf6" },
-    { label: "KYC & Verification", sub: "Identity verified ✓", icon: ShieldCheck, color: "#10b981" },
+    { label: "Notification Preferences", sub: "Email, SMS, push alerts",   icon: Bell,        color: "#3b82f6" },
+    { label: "Change Password",           sub: "Update your credentials",   icon: Lock,        color: "#8b5cf6" },
+    { label: "KYC & Verification",        sub: user?.is_verified ? "Identity verified ✓" : "Not yet verified", icon: ShieldCheck, color: "#10b981" },
   ];
+
+  const contactRows = [
+    companyName && { icon: Building2, label: "Company",  value: companyName },
+    user?.email       && { icon: Mail,      label: "Email",    value: user.email },
+    user?.phone_number && { icon: Phone,    label: "Phone",    value: user.phone_number },
+    address           && { icon: MapPin,    label: "Location", value: address },
+  ].filter(Boolean) as { icon: React.ElementType; label: string; value: string }[];
 
   return (
     <div className="flex flex-col gap-5">
@@ -56,26 +67,28 @@ export function ProfileTab() {
         <div className="flex items-start gap-5 z-10 relative">
           <div className="relative">
             <div className="w-16 h-16 rounded-2xl bg-[#ffc107]/20 border-2 border-[#ffc107]/40 flex items-center justify-center shrink-0">
-              <span className="font-extrabold text-[22px] text-[#ffc107]">AO</span>
+              <span className="font-extrabold text-[22px] text-[#ffc107]">{initials}</span>
             </div>
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-[#121212] flex items-center justify-center">
-              <ShieldCheck className="w-2.5 h-2.5 text-white" />
-            </div>
+            {user?.is_verified && (
+              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-[#121212] flex items-center justify-center">
+                <ShieldCheck className="w-2.5 h-2.5 text-white" />
+              </div>
+            )}
           </div>
           <div className="flex-1">
-            <h2 className="font-extrabold text-[20px] text-white">
-              {PROFILE.name}
-            </h2>
-            <p className="text-[13px] text-white/50">{PROFILE.company}</p>
-            <div className="flex items-center gap-2 mt-2">
+            <h2 className="font-extrabold text-[20px] text-white">{displayName || "—"}</h2>
+            {companyName && <p className="text-[13px] text-white/50">{companyName}</p>}
+            <div className="flex items-center gap-2 mt-2 flex-wrap">
               <span className="inline-flex items-center gap-1 bg-[#ffc107]/20 border border-[#ffc107]/40 text-[#ffc107] text-[11px] font-bold px-2.5 py-1 rounded-full">
                 <Star className="w-2.5 h-2.5" />
-                {PROFILE.role}
+                Customer
               </span>
-              <span className="inline-flex items-center gap-1 bg-green-500/20 border border-green-500/30 text-green-400 text-[11px] font-bold px-2.5 py-1 rounded-full">
-                <ShieldCheck className="w-2.5 h-2.5" />
-                KYC Verified
-              </span>
+              {user?.is_verified && (
+                <span className="inline-flex items-center gap-1 bg-green-500/20 border border-green-500/30 text-green-400 text-[11px] font-bold px-2.5 py-1 rounded-full">
+                  <ShieldCheck className="w-2.5 h-2.5" />
+                  KYC Verified
+                </span>
+              )}
             </div>
           </div>
           <button className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/15 flex items-center justify-center transition-colors z-10">
@@ -87,9 +100,9 @@ export function ProfileTab() {
       {/* Stats strip */}
       <div className="grid grid-cols-3 gap-3">
         {[
-          { label: "Orders", value: MOCK_STATS.totalOrders.toString() },
-          { label: "Total Spent", value: formatNaira(MOCK_STATS.totalSpent) },
-          { label: "Completed", value: MOCK_STATS.completedOrders.toString() },
+          { label: "Orders",    value: stats.totalOrders.toString() },
+          { label: "Total Spent", value: formatNaira(stats.totalSpent) },
+          { label: "Completed", value: stats.completedOrders.toString() },
         ].map((s, i) => (
           <motion.div
             key={s.label}
@@ -105,38 +118,31 @@ export function ProfileTab() {
       </div>
 
       {/* Contact details */}
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden"
-      >
-        <div className="px-5 py-4 border-b border-zinc-50">
-          <h3 className="font-bold text-[14px] text-zinc-400 uppercase tracking-wide">
-            Contact Information
-          </h3>
-        </div>
-        {[
-          { icon: Building2, label: "Company", value: PROFILE.company },
-          { icon: Mail, label: "Email", value: PROFILE.email },
-          { icon: Phone, label: "Phone", value: PROFILE.phone },
-          { icon: MapPin, label: "Address", value: PROFILE.address },
-        ].map(({ icon: Icon, label, value }) => (
-          <div key={label} className="flex items-start gap-4 px-5 py-4 border-b border-zinc-50 last:border-none">
-            <div className="w-9 h-9 rounded-xl bg-zinc-100 flex items-center justify-center shrink-0 mt-0.5">
-              <Icon className="w-4 h-4 text-zinc-400" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-wide">
-                {label}
-              </p>
-              <p className="font-semibold text-[14px] text-[#121212] mt-0.5 break-all">
-                {value}
-              </p>
-            </div>
+      {contactRows.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden"
+        >
+          <div className="px-5 py-4 border-b border-zinc-50">
+            <h3 className="font-bold text-[14px] text-zinc-400 uppercase tracking-wide">
+              Contact Information
+            </h3>
           </div>
-        ))}
-      </motion.div>
+          {contactRows.map(({ icon: Icon, label, value }) => (
+            <div key={label} className="flex items-start gap-4 px-5 py-4 border-b border-zinc-50 last:border-none">
+              <div className="w-9 h-9 rounded-xl bg-zinc-100 flex items-center justify-center shrink-0 mt-0.5">
+                <Icon className="w-4 h-4 text-zinc-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-wide">{label}</p>
+                <p className="font-semibold text-[14px] text-[#121212] mt-0.5 break-all">{value}</p>
+              </div>
+            </div>
+          ))}
+        </motion.div>
+      )}
 
       {/* Settings */}
       <motion.div
@@ -155,10 +161,7 @@ export function ProfileTab() {
             key={label}
             className="w-full flex items-center gap-4 px-5 py-4 hover:bg-zinc-50 transition-colors border-b border-zinc-50 last:border-none text-left"
           >
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-              style={{ background: color + "20" }}
-            >
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: color + "20" }}>
               <Icon className="w-4 h-4" style={{ color }} />
             </div>
             <div className="flex-1">
@@ -170,9 +173,7 @@ export function ProfileTab() {
         ))}
       </motion.div>
 
-      <p className="text-center text-[12px] text-zinc-300 pb-4">
-        Member since {PROFILE.memberSince}
-      </p>
+      <p className="text-center text-[12px] text-zinc-300 pb-4">Member since {memberSince}</p>
     </div>
   );
 }
