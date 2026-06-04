@@ -32,10 +32,12 @@ import { AccountType } from "@/constants/registerConstants";
 
 // Map frontend role slugs → backend enum values
 const ROLE_MAP: Record<AccountType, string> = {
-  contractor: "CUSTOMER",
-  supplier:   "AGENT",
-  logistics:  "LOGISTICS",
-  financial:  "FINANCE",
+  CUSTOMER:        "CUSTOMER",
+  AGENT:           "AGENT",
+  LOGISTICS:       "LOGISTICS",
+  PROJECT_MANAGER: "PROJECT_MANAGER",
+  FINANCE:         "FINANCE",
+  QUARRY_OWNER:    "QUARRY_OWNER",
 };
 
 // ── Constants ──────────────────────────────────────────────────────

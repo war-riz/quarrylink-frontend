@@ -25,10 +25,12 @@ export const REGISTER_STATS = [
 ] as const;
 
 export const ACCOUNT_TYPES = [
-  { value: "contractor", label: "Contractor / Developer" },
-  { value: "supplier", label: "Quarry Supplier" },
-  { value: "logistics", label: "Logistics Provider" },
-  { value: "financial", label: "Financial Institution" },
+  { value: "CUSTOMER",         label: "Contractor / Developer" },
+  { value: "AGENT",            label: "Quarry Agent" },
+  { value: "LOGISTICS",        label: "Logistics Provider" },
+  { value: "PROJECT_MANAGER",  label: "Project Manager" },
+  { value: "FINANCE",          label: "Financial Institution" },
+  { value: "QUARRY_OWNER",     label: "Quarry Owner" },
 ] as const;
 
 export type AccountType = (typeof ACCOUNT_TYPES)[number]["value"];
