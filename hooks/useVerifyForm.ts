@@ -136,7 +136,7 @@ export function useVerifyForm(email: string, phone: string) {
       const res = await fetch(`${BASE_URL}/users/auth/verify-email/`, {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ login: contact, otp: fullCode }),
+        body:    JSON.stringify({ login: contact, otp_code: fullCode }),
       });
 
       const data = await res.json();
